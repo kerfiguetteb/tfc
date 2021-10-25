@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Equipe{% endblock %}
+
+{% block body %}
+    <h1>Equipe</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ equipe.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ equipe.name }}</td>
+            </tr>
+            <tr>
+                <th>Pts</th>
+                <td>{{ equipe.pts }}</td>
+            </tr>
+            <tr>
+                <th>Jo</th>
+                <td>{{ equipe.jo }}</td>
+            </tr>
+            <tr>
+                <th>Ga</th>
+                <td>{{ equipe.ga }}</td>
+            </tr>
+            <tr>
+                <th>Nu</th>
+                <td>{{ equipe.nu }}</td>
+            </tr>
+            <tr>
+                <th>Pe</th>
+                <td>{{ equipe.pe }}</td>
+            </tr>
+            <tr>
+                <th>Bp</th>
+                <td>{{ equipe.bp }}</td>
+            </tr>
+            <tr>
+                <th>Bc</th>
+                <td>{{ equipe.bc }}</td>
+            </tr>
+            <tr>
+                <th>Diff</th>
+                <td>{{ equipe.diff }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('equipe_index') }}">back to list</a>
+
+    <a href="{{ path('equipe_edit', {'id': equipe.id}) }}">edit</a>
+
+    {{ include('equipe/_delete_form.html.twig') }}
+{% endblock %}

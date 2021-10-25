@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\EquipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -21,11 +23,13 @@ class Equipe
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read:match"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"read:match"})
      */
     private $pts;
 
@@ -307,4 +311,5 @@ class Equipe
 
         return $this;
     }
+
 }

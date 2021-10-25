@@ -8,17 +8,21 @@ use App\Entity\Joueur;
 use App\Entity\Domicile;
 use App\Entity\Visiteur;
 use App\Entity\Categorie;
-use App\Entity\Rencontre;
+use App\Entity\Tag;
+use App\Entity\Post;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Faker\Factory;
+
 
 
 class AppFixtures extends Fixture implements FixtureGroupInterface
 {
-   
+    private $encoder;
+
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
         $this->encoder = $encoder;
@@ -33,13 +37,13 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $manager)
     {        
         $this->loadAdmins($manager);
+        $postAndTag = $this->loadPostsAndTags($manager);
         $journers = $this->loadJourners($manager);
         $categories = $this->loadCategories($manager);
         $equipes = $this->loadEquipes($manager, $categories);
         $joueurs = $this->loadJoueurs($manager,$equipes);
         $visiteurs = $this->loadVisiteurs($manager, $equipes);
-        $rencontres = $this->loadRencontres($manager, $journers, $visiteurs);        
-        $domiciles = $this->loadDomiciles($manager, $equipes, $visiteurs, $rencontres);
+        $domiciles = $this->loadDomiciles($manager, $equipes, $visiteurs);
         $manager->flush();
     }
 
@@ -101,7 +105,7 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             $joueur->setCartonRouge(0);
             $joueur->setSexe('H');
             $joueur->setDateDeNaissance(\DateTime::createFromFormat('d/m/Y', $row['dateDeNaissance']));;
-            $joueur->setEmail($row['email']);
+            // $joueur->setEmail($row['email']);
             $joueur->setMatchJouer(0);
             $joueur->setBut(0);
             $joueur->setEquipe($tilloy);
@@ -261,16 +265,13 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     }
 
 
-    public function loadDomiciles(ObjectManager $manager, array $equipes, array $visiteurs, array $rencontres)
+    public function loadDomiciles(ObjectManager $manager, array $equipes, array $visiteurs)
     {
         $domiciles = [];
         $equipeIndex = 8;
         $equipe = $equipes[$equipeIndex];
         $visiteurIndex = 0;
         $visiteur = $visiteurs[$visiteurIndex];
-        $rencontreIndex = 0;
-        $rencontre = $rencontres[$rencontreIndex];
-       
         $ptsMatchGagne = 3;
         $ptsMatchNul = 1;
         $ga = 1;
@@ -298,7 +299,6 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $visiteur->getEquipe()->setDiff($bc-$bp);
 
         $domicile->setVisiteur($visiteur);
-        $domicile->setRencontre($rencontre);
         $manager->persist($domicile);
         $domiciles[] = $domicile;
 
@@ -328,21 +328,31 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         return $domiciles;
 
     }
-    public function loadRencontres(ObjectManager $manager, array $journers, array $visiteurs)
-    {
-        $visiteur = $visiteurs[0];
-        $journer = $journers[0];
+    public function loadPostsAndTags(ObjectManager $manager)
+    {        
+        
+        $faker = Factory::create('fr_FR');
 
-        $rencontres = [];
 
-        $rencontre = new Rencontre;
-        $rencontre->addVisiteur($visiteur);
-        $rencontre->setJourner($journer);
-        $manager->persist($rencontre);
-        $rencontres[]=$rencontre;
+        for ($i = 1; $i <= 20; $i++) {
+            $tag = new Tag();
+            $tag->setName($faker->words($nb = 3, $asText = true));
+            $manager->persist($tag);
+        }
 
-        return $rencontres;
+        $manager->flush();
+
+
+        for ($i = 1; $i <= 20; $i++) {
+            $post = new Post();
+            $post->setTitre($faker->sentence($nbWords = 6, $variableNbWords = true));
+            $post->setBody($faker->text($maxNbChars = 1000));
+            $post->setPublishDate($faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = null));
+            $post->addTag($tag);
+            $manager->persist($post);
+        }
+
+        $manager->flush();
     }
-
 
 }

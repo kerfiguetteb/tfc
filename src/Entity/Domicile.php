@@ -26,6 +26,7 @@ class Domicile
     /**
      * @ORM\OneToOne(targetEntity=Visiteur::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+
      */
     private $visiteur;
 
@@ -33,12 +34,6 @@ class Domicile
      * @ORM\Column(type="integer")
      */
     private $score;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Rencontre::class, inversedBy="domicile")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $rencontre;
 
 
     public function getId(): ?int
@@ -81,19 +76,6 @@ class Domicile
 
         return $this;
     }
-
-    public function getRencontre(): ?Rencontre
-    {
-        return $this->rencontre;
-    }
-
-    public function setRencontre(?Rencontre $rencontre): self
-    {
-        $this->rencontre = $rencontre;
-
-        return $this;
-    }
-
 
 
 }

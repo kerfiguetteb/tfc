@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use App\Repository\VisiteurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 /**
  * @ORM\Entity(repositoryClass=VisiteurRepository::class)
@@ -14,26 +17,23 @@ class Visiteur
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"read:match"})
      */
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=Equipe::class, inversedBy="visiteur")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"read:match"})
+
      */
     private $equipe;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read:match"})
      */
     private $score;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Rencontre::class, inversedBy="visiteur")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $rencontre;
-
 
 
     public function getId(): ?int
@@ -64,18 +64,5 @@ class Visiteur
 
         return $this;
     }
-
-    public function getRencontre(): ?Rencontre
-    {
-        return $this->rencontre;
-    }
-
-    public function setRencontre(?Rencontre $rencontre): self
-    {
-        $this->rencontre = $rencontre;
-
-        return $this;
-    }
-
 
 }

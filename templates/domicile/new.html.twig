@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Domicile{% endblock %}
+
+{% block body %}
+    <h1>Create new Domicile</h1>
+
+    {{ include('domicile/_form.html.twig') }}
+
+    <a href="{{ path('domicile_index') }}">back to list</a>
+{% endblock %}

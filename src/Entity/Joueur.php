@@ -29,7 +29,7 @@ class Joueur
     private $prenom;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
 
@@ -39,17 +39,17 @@ class Joueur
     private $sexe;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $cartonJaune;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $cartonRouge;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $but;
 
@@ -59,7 +59,7 @@ class Joueur
     private $dateDeNaissance;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $matchJouer;
 
@@ -213,5 +213,6 @@ class Joueur
 
         return $this;
     }
+
 
 }

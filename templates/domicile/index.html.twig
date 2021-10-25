@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Domicile index{% endblock %}
+
+{% block body %}
+    <h1>Domicile index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Domicile</th>
+                <th>Score</th>
+                <th>Visiteur</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for domicile in domiciles %}
+            <tr>
+                <td>{{ domicile.equipe.name }}</td>
+                <td>{{ domicile.score }} - {{ domicile.visiteur.score }}</td>
+                <td>{{ domicile.visiteur.equipe.name }}</td>
+                <td>
+                    <a href="{{ path('domicile_show', {'id': domicile.id}) }}">show</a>
+                    <a href="{{ path('domicile_edit', {'id': domicile.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('domicile_new') }}">Create new</a>
+{% endblock %}

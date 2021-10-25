@@ -19,22 +19,24 @@ class EquipeRepository extends ServiceEntityRepository
         parent::__construct($registry, Equipe::class);
     }
 
-    // /**
-    //  * @return Equipe[] Returns an array of Equipe objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Equipe[] Returns an array of Equipe objects
+     */
+    public function findByPointAndDiff(int $value)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+        
+        return $this->createQueryBuilder('p')
+        ->andWhere('p.pts >= :val')
+        ->andWhere('p.diff >= :val')
+        ->andWhere('p.bp >= :val')
+        ->setParameter('val', $value)
+        ->orderBy('p.pts', 'DESC')
+        ->AddOrderBy('p.diff', 'DESC')
+        ->AddOrderBy('p.bp', 'DESC')
+        ->getQuery()
+        ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Equipe
