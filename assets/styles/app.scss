@@ -4,9 +4,8 @@ $primary: darken(#e44848, 20%);
 // the ~ allows you to reference things in node_modules
 @import "~bootstrap/scss/bootstrap";
 
-body {
-    background-color: rgba(255, 8, 0, 0.527);
-}
+// body {
+// }
 a {
     color:  #e93b44 ;
     text-decoration: none;
@@ -21,4 +20,7 @@ h1{
 }
 .no-available{
     color: rgb(206, 65, 65);
+}
+.card{
+    margin: 25px;
 }

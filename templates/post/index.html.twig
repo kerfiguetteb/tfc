@@ -7,13 +7,23 @@
 
         <body>
         {% for post in posts %}
-                <h2>{{ post.titre }}</h2>
-                <p>{{ post.body }}</p>
-                <span>{{ post.publishDate ? post.publishDate|date('Y-m-d') : '' }}</span>
-                <td>
-                    <a href="{{ path('post_show', {'id': post.id}) }}">show</a>
-                    <a href="{{ path('post_edit', {'id': post.id}) }}">edit</a>
-                </td>
+        <div class="card" style="">
+        <img src="..." class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{ post.titre }}</h5>
+            <p class="card-text">{{ post.body }}</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ post.publishDate ? post.publishDate|date('Y-m-d') : '' }}</li>
+            {# <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li> #}
+        </ul>
+        <div class="card-body">
+            <a href="{{ path('post_show', {'id': post.id}) }}" class="card-link">show</a>
+            <a href="{{ path('post_edit', {'id': post.id}) }}" class="card-link">edit</a>
+        </div>
+        </div>
+
         {% else %}
             <tr>
                 <td colspan="5">no records found</td>
@@ -22,3 +32,6 @@
         </body>
     <a href="{{ path('post_new') }}">Create new</a>
 {% endblock %}
+
+
+
