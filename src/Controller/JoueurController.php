@@ -6,13 +6,11 @@ use App\Entity\Joueur;
 use App\Entity\User;
 use App\Form\JoueurType;
 use App\Repository\JoueurRepository;
+use App\Repository\SectionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
 
 /**
  * @Route("/joueur")
@@ -20,54 +18,41 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class JoueurController extends AbstractController
 {
     /**
-     * @Route("/", name="joueur_index", methods={"GET", "POST"})
+     * @Route("/", name="joueur_index", methods={"GET"})
      */
-    public function index(Request $request, JoueurRepository $joueurRepository): Response
+    public function index(JoueurRepository $joueurRepository, SectionRepository $sectionRepository, Request $request): Response
     {
         $joueurs = $joueurRepository->findAll();
 
-        // On vérifie si l'utilisateur est un joueur
-        // Note : on peut aussi utiliser in_array('ROLE_JOUEUR', $user->getRoles())
-        // au lieu de $this->isGranted('ROLE_JOUEUR').
         if ($this->isGranted('ROLE_JOUEUR')) {
-            // L'utilisateur est un joueur
-
-            // On récupère le compte de l'utilisateur authentifié
             $user = $this->getUser();
 
-            // On récupère le profil joueur lié au compte utilisateur
+
+            //on récupere le profil joueur rattacher au compte user
             $joueur = $joueurRepository->findOneByUser($user);
 
-            // On récupère l'equipe de l'utilisateur
-            $equipe = $joueur->getEquipe();
 
-            // On récupère la liste des joueurs de l'equipe'
-            $joueurs = $equipe->getJoueurs();
+            $categorie = $joueur->getCategorie();
+            $section = $joueur->getSection();
+            $groupe = $joueur->getGroupe();
+            $joueurs = $joueurRepository->findBySectionByCategorieByGroupe($section,$categorie,$groupe);
+
+            return $this->render('joueur/index.html.twig', [
+                'joueurs' => $joueurs,
+            ]);
         }
-
-        return $this->render('joueur/index.html.twig', [
-            'joueurs' =>  $joueurs,
-        ]);
     }
 
     /**
      * @Route("/new", name="joueur_new", methods={"GET","POST"})
      */
-    public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function new(Request $request): Response
     {
         $joueur = new Joueur();
         $form = $this->createForm(JoueurType::class, $joueur);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user = $joueur->getUser();
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $form->get('user')->get('plainPassword')->getData()
-                )
-            );
-
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($joueur);
             $entityManager->flush();

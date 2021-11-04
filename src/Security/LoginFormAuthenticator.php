@@ -107,8 +107,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
 
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
             $url = $this->urlGenerator->generate('joueur_index');
-        // } elseif (in_array('ROLE_TEACHER', $user->getRoles())) {
-        //     $url = $this->urlGenerator->generate('project_index');
         } elseif (in_array('ROLE_JOUEUR', $user->getRoles())) {
             $joueur = $this->joueurRepository->findOneByUser($user);
 
@@ -119,8 +117,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             $url = $this->urlGenerator->generate('joueur_show', [
                 'id' => $joueur->getId(),
             ]);
-        // } elseif (in_array('ROLE_CLIENT', $user->getRoles())) {
-        //     $url = $this->urlGenerator->generate('project_index');
         } else {
             throw new \Exception("Votre rôle n'est pas reconnu");
         }

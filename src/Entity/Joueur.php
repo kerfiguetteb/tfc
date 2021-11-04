@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\JoueurRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
+// use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=JoueurRepository::class)
@@ -28,10 +28,6 @@ class Joueur
      */
     private $prenom;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -53,10 +49,6 @@ class Joueur
      */
     private $but;
 
-    /**
-     * @ORM\Column(type="date")
-     */
-    private $dateDeNaissance;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
@@ -69,12 +61,39 @@ class Joueur
      */
     private $equipe;
    
+    // /**
+    //  * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+    //  * @ORM\JoinColumn(nullable=false)
+    //  * @Assert\Valid
+    //  */
+    // private $user;
+
     /**
-     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Assert\Valid
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="joueurs")
      */
-    private $user;
+    private $categorie;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dateDeNaissance;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Section::class, inversedBy="joueurs")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $section;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="joueurs")
+     */
+    private $groupe;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Position::class, inversedBy="joueurs")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $position;
 
 
     public function getId(): ?int
@@ -102,18 +121,6 @@ class Joueur
     public function setPrenom(string $prenom): self
     {
         $this->prenom = $prenom;
-
-        return $this;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
 
         return $this;
     }
@@ -166,18 +173,6 @@ class Joueur
         return $this;
     }
 
-    public function getDateDeNaissance(): ?\DateTimeInterface
-    {
-        return $this->dateDeNaissance;
-    }
-
-    public function setDateDeNaissance(\DateTimeInterface $dateDeNaissance): self
-    {
-        $this->dateDeNaissance = $dateDeNaissance;
-
-        return $this;
-    }
-
     public function getMatchJouer(): ?int
     {
         return $this->matchJouer;
@@ -202,14 +197,74 @@ class Joueur
         return $this;
     }
     
-    public function getUser(): ?User
+    // public function getUser(): ?User
+    // {
+    //     return $this->user;
+    // }
+
+    // public function setUser(User $user): self
+    // {
+    //     $this->user = $user;
+
+    //     return $this;
+    // }
+
+    public function getCategorie(): ?Categorie
     {
-        return $this->user;
+        return $this->categorie;
     }
 
-    public function setUser(User $user): self
+    public function setCategorie(?Categorie $categorie): self
     {
-        $this->user = $user;
+        $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getDateDeNaissance(): ?\DateTimeInterface
+    {
+        return $this->dateDeNaissance;
+    }
+
+    public function setDateDeNaissance(\DateTimeInterface $dateDeNaissance): self
+    {
+        $this->dateDeNaissance = $dateDeNaissance;
+
+        return $this;
+    }
+
+    public function getSection(): ?Section
+    {
+        return $this->section;
+    }
+
+    public function setSection(?Section $section): self
+    {
+        $this->section = $section;
+
+        return $this;
+    }
+
+    public function getGroupe(): ?Groupe
+    {
+        return $this->groupe;
+    }
+
+    public function setGroupe(?Groupe $groupe): self
+    {
+        $this->groupe = $groupe;
+
+        return $this;
+    }
+
+    public function getPosition(): ?Position
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?Position $position): self
+    {
+        $this->position = $position;
 
         return $this;
     }

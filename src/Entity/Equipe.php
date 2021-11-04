@@ -28,7 +28,7 @@ class Equipe
     private $name;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      * @Groups({"read:match"})
      */
     private $pts;
@@ -44,38 +44,38 @@ class Equipe
     private $visiteur;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $jo; // nombre de match
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $ga; // match gagner
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $nu; // match null
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $pe; // penality
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $bp; //but
     
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",nullable=true)
      */
     private $bc; // but encaisser
 
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer", nullable=true)
      */
     private $diff;
 
@@ -85,10 +85,9 @@ class Equipe
     private $joueurs;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="equipe")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity=Championnat::class, inversedBy="equipes")
      */
-    private $categorie; // difference entre but et but encaisser bp - bc = diff
+    private $championnat;
 
     public function __construct()
     {
@@ -300,14 +299,20 @@ class Equipe
         return $this;
     }
 
-    public function getCategorie(): ?Categorie
+    public function __toString()
+
     {
-        return $this->categorie;
+        return $this->name;
     }
 
-    public function setCategorie(?Categorie $categorie): self
+    public function getChampionnat(): ?Championnat
     {
-        $this->categorie = $categorie;
+        return $this->championnat;
+    }
+
+    public function setChampionnat(?Championnat $championnat): self
+    {
+        $this->championnat = $championnat;
 
         return $this;
     }

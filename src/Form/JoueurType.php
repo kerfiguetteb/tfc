@@ -19,10 +19,13 @@ class JoueurType extends AbstractType
             ->add('cartonJaune')
             ->add('cartonRouge')
             ->add('but')
-            ->add('dateDeNaissance')
             ->add('matchJouer')
+            ->add('dateDeNaissance')
             ->add('equipe')
             ->add('user')
+            ->add('categorie')
+            ->add('section')
+            ->add('groupe')
         ;
     }
 

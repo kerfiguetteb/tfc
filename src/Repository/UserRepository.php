@@ -36,22 +36,34 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    // /**
-    //  * @return User[] Returns an array of User objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $role string nom d'un rôle comme 'ROLE_ADMIN', 'ROLE_STUDENT', etc
+     * @return User[] Returns an array of User objects
+     */
+    public function findByRole(string $role)
     {
+        // Cette requête génère le code DQL suivant :
+        // "SELECT u FROM App\Entity\User u WHERE u.roles LIKE :role ORDER BY u.email ASC"
+        // 'u' sera l'alias qui permet de désigner un user.
         return $this->createQueryBuilder('u')
-            ->andWhere('u.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
-            ->setMaxResults(10)
+            // Ajout d'un filtre qui ne retient que les users
+            // qui contiennent (opérateur LIKE) la chaîne de
+            // caractères contenue dans la variable :role.
+            ->andWhere('u.roles LIKE :role')
+            // Affactation d'une valeur à la variable :role.
+            // Le symbole % est joker qui veut dire
+            // « match toutes les chaînes de caractères ».
+            ->setParameter('role', "%{$role}%")
+            // Tri par adresse email en ordre croissant (a, b, c, ...).
+            ->orderBy('u.email', 'ASC')
+            // Récupération d'une requête qui n'attend qu'à être exécutée.
             ->getQuery()
+            // Exécution de la requête.
+            // Récupération d'un tableau de résultat.
+            // Ce tableau peut contenir, zéro, un ou plusieurs lignes.
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?User
