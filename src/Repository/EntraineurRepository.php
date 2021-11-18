@@ -14,27 +14,18 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class EntraineurRepository extends ServiceEntityRepository
 {
+    use ProfileRepositoryTrait;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Entraineur::class);
     }
 
-    // /**
-    //  * @return Entraineur[] Returns an array of Entraineur objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('e.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+    /**
+     * @return Entraineur[] Returns an array of Entraineur objects
+     */
+    
+    
 
     /*
     public function findOneBySomeField($value): ?Entraineur

@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entraineur index{% endblock %}
+
+{% block body %}
+    <h1>Entraineur index</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for entraineur in entraineurs %}
+
+            <tr>
+                <td>{{ entraineur.id }}</td>
+                <td>{{ entraineur.nom}}</td>
+                <td>{{ entraineur.prenom}}</td>
+                <td>
+                    <a href="{{ path('entraineur_show', {'id': entraineur.id}) }}">show</a>
+                    <a href="{{ path('entraineur_edit', {'id': entraineur.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('entraineur_new') }}">Create new</a>
+{% endblock %}

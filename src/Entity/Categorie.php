@@ -29,27 +29,26 @@ class Categorie
      */
     private $joueurs;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Groupe::class, mappedBy="categories")
-     */
-    private $groupes;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Section::class, mappedBy="categories")
-     */
-    private $sections;
 
     /**
      * @ORM\OneToMany(targetEntity=Entraineur::class, mappedBy="categories")
      */
     private $entraineurs;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $section;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $groupe;
+
 
     public function __construct()
     {
         $this->joueurs = new ArrayCollection();
-        $this->groupes = new ArrayCollection();
-        $this->sections = new ArrayCollection();
         $this->entraineurs = new ArrayCollection();
     }
 
@@ -102,60 +101,6 @@ class Categorie
 
 
     /**
-     * @return Collection|Groupe[]
-     */
-    public function getGroupes(): Collection
-    {
-        return $this->groupes;
-    }
-
-    public function addGroupe(Groupe $groupe): self
-    {
-        if (!$this->groupes->contains($groupe)) {
-            $this->groupes[] = $groupe;
-            $groupe->addCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGroupe(Groupe $groupe): self
-    {
-        if ($this->groupes->removeElement($groupe)) {
-            $groupe->removeCategory($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Section[]
-     */
-    public function getSections(): Collection
-    {
-        return $this->sections;
-    }
-
-    public function addSection(Section $section): self
-    {
-        if (!$this->sections->contains($section)) {
-            $this->sections[] = $section;
-            $section->addCategory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSection(Section $section): self
-    {
-        if ($this->sections->removeElement($section)) {
-            $section->removeCategory($this);
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Entraineur[]
      */
     public function getEntraineurs(): Collection
@@ -181,6 +126,30 @@ class Categorie
                 $entraineur->setCategories(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSection(): ?string
+    {
+        return $this->section;
+    }
+
+    public function setSection(string $section): self
+    {
+        $this->section = $section;
+
+        return $this;
+    }
+
+    public function getGroupe(): ?string
+    {
+        return $this->groupe;
+    }
+
+    public function setGroupe(string $groupe): self
+    {
+        $this->groupe = $groupe;
 
         return $this;
     }

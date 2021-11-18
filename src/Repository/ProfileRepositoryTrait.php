@@ -17,17 +17,17 @@ Trait ProfileRepositoryTrait
     /**
      * Cette fonction permet de récupérer un profil à partir d'un user.
      * Un profil n'est pas un type de données strict, c'est juste une
-     * appelation qui permet de désigner un objet de type dirigant,
-     * Joueur ou Coach.
+     * appelation qui permet de désigner un objet de type Client,
+     * Student ou Teacher.
      *
      * L'annotation param permet de donner des indications sur le
      * paramètre d'une fonction.
-     * @param $role string optional nom d'un rôle comme 'ROLE_ADMIN', 'ROLE_JOUEUR', etc
+     * @param $role string optional nom d'un rôle comme 'ROLE_ADMIN', 'ROLE_STUDENT', etc
      * L'annotation return permet de donner des indications sur la
      * valeur de retour d'une fonction. La barre verticale dans
      * Foo|Bar|Baz permet de préciser que la valeur de retour est de
      * type Foo ou Bar ou Baz.
-     * @return App\Entity\Joueur
+     * @return App\Entity\Joueur|App\Entity\Entraineur
      */
     public function findOneByUser(User $user, string $role = '')
     {

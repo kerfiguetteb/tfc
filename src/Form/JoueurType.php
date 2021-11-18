@@ -6,6 +6,8 @@ use App\Entity\Joueur;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
 
 class JoueurType extends AbstractType
 {
@@ -14,18 +16,21 @@ class JoueurType extends AbstractType
         $builder
             ->add('nom')
             ->add('prenom')
-            ->add('email')
             ->add('sexe')
-            ->add('cartonJaune')
-            ->add('cartonRouge')
-            ->add('but')
-            ->add('matchJouer')
-            ->add('dateDeNaissance')
+            // ->add('cartonJaune')
+            // ->add('cartonRouge')
+            // ->add('but')
+            // ->add('matchJouer')
+            ->add('dateDeNaissance', DateType::class, [
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd', ])
+            
             ->add('equipe')
-            ->add('user')
-            ->add('categorie')
-            ->add('section')
-            ->add('groupe')
+            ->add('user', UserType::class, [
+                // Masquage du label (le nom) du champ
+                'label' => false,
+            ])
+            // ->add('categorie')
         ;
     }
 
@@ -36,3 +41,5 @@ class JoueurType extends AbstractType
         ]);
     }
 }
+// ...
+

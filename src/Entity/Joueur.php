@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\JoueurRepository;
 use Doctrine\ORM\Mapping as ORM;
-// use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=JoueurRepository::class)
@@ -61,12 +61,12 @@ class Joueur
      */
     private $equipe;
    
-    // /**
-    //  * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
-    //  * @ORM\JoinColumn(nullable=false)
-    //  * @Assert\Valid
-    //  */
-    // private $user;
+    /**
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid
+     */
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="joueurs")
@@ -77,17 +77,6 @@ class Joueur
      * @ORM\Column(type="date")
      */
     private $dateDeNaissance;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Section::class, inversedBy="joueurs")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $section;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="joueurs")
-     */
-    private $groupe;
 
     /**
      * @ORM\ManyToOne(targetEntity=Position::class, inversedBy="joueurs")
@@ -197,17 +186,17 @@ class Joueur
         return $this;
     }
     
-    // public function getUser(): ?User
-    // {
-    //     return $this->user;
-    // }
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
 
-    // public function setUser(User $user): self
-    // {
-    //     $this->user = $user;
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
 
-    //     return $this;
-    // }
+        return $this;
+    }
 
     public function getCategorie(): ?Categorie
     {
@@ -229,30 +218,6 @@ class Joueur
     public function setDateDeNaissance(\DateTimeInterface $dateDeNaissance): self
     {
         $this->dateDeNaissance = $dateDeNaissance;
-
-        return $this;
-    }
-
-    public function getSection(): ?Section
-    {
-        return $this->section;
-    }
-
-    public function setSection(?Section $section): self
-    {
-        $this->section = $section;
-
-        return $this;
-    }
-
-    public function getGroupe(): ?Groupe
-    {
-        return $this->groupe;
-    }
-
-    public function setGroupe(?Groupe $groupe): self
-    {
-        $this->groupe = $groupe;
 
         return $this;
     }

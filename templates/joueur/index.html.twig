@@ -1,9 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Joueur index{% endblock %}
+{% block title %}Joueur{% endblock %}
 
 {% block body %}
-    <h1>Joueur index</h1>
+    <h1>Joueur</h1>
+    
 
     <table class="table">
         <thead>
@@ -11,7 +12,6 @@
                 <th>Id</th>
                 <th>Nom</th>
                 <th>Prenom</th>
-                <th>Email</th>
                 <th>Sexe</th>
                 <th>CartonJaune</th>
                 <th>CartonRouge</th>
@@ -27,7 +27,6 @@
                 <td>{{ joueur.id }}</td>
                 <td>{{ joueur.nom }}</td>
                 <td>{{ joueur.prenom }}</td>
-                <td>{{ joueur.email }}</td>
                 <td>{{ joueur.sexe }}</td>
                 <td>{{ joueur.cartonJaune }}</td>
                 <td>{{ joueur.cartonRouge }}</td>

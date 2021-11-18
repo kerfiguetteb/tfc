@@ -22,28 +22,23 @@ class CategorieRepository extends ServiceEntityRepository
     /**
      * @return Categorie[] Returns an array of Categorie objects
      */
-    public function findBySection($value)
-    {
+
+     public function findByGroupeAndsection($g, $s)
+     {
         return $this->createQueryBuilder('c')
-            ->innerJoin('c.sections','s')
-            ->andWhere('s.id = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    public function findByJoueur($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->innerJoin('c.joueur','s')
-            ->andWhere('s.id = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
+        ->where('c.groupe LIKE :g')
+        ->andWhere('c.section LIKE :s')
+        ->setParameter('g', "%{$g}%")
+        ->setParameter('s', "%{$s}%")
+        // ->orderBy('s.firstname', 'ASC')
+        // ->orderBy('s.lastname', 'ASC')
+        ->setMaxResults(10)
+        ->getQuery()
+        ->getResult()
+    ;
+
+     }
+
 
     /*
     public function findOneBySomeField($value): ?Categorie

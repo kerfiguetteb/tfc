@@ -25,51 +25,7 @@ class JoueurRepository extends ServiceEntityRepository
     /**
      * @return Joueur[] Returns an array of Joueur objects
      */
-    
-    public function findBySectionByCategorieByGroupe($a,$b,$c)
-    {
         
-        return $this->createQueryBuilder('s')
-            ->innerJoin('s.section', 'js')
-            ->Where('js.id = :a')
-            ->setParameter('a', $a)
-
-            ->innerJoin('s.categorie', 'jc')
-            ->andWhere('jc.id = :b')
-            ->setParameter('b', $b)
-
-            ->innerJoin('s.groupe', 'jg')
-            ->andWhere('jg.id = :c')
-            ->setParameter('c', $c)
-
-            ->getQuery()
-            // ->setMaxResults(10)
-            ->getResult()
-        ;
-    }
-    
-    public function findByCategorie($value)
-    {
-        return $this->createQueryBuilder('c')
-            ->innerJoin('c.categorie', 'j')
-            ->andWhere('j.id = :val')
-            ->setParameter('val', $value)
-            ->orderBy('j.id', 'ASC')
-            ->getQuery()
-            // ->setMaxResults(10)
-            ->getResult()
-        ;
-    }
-    public function findBySexe($value)
-    {
-        return $this->createQueryBuilder('j')
-            ->Where('j.sexe = :val')
-            ->setParameter('val', $value)
-            ->orderBy('j.id', 'ASC')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 
     /*
     public function findOneBySomeField($value): ?Joueur

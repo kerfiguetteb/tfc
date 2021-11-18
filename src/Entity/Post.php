@@ -6,9 +6,11 @@ use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
+ * @Vich\Uploadable
  */
 class Post
 {
@@ -18,6 +20,19 @@ class Post
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
+     */
+
+    private $filename;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName")
+     */
+    private $imageFile;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -111,4 +126,42 @@ class Post
 
         return $this;
     }
+
+
+    /**
+     * @return null|string
+     */
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+    
+    /**
+     * @param null|string $filename
+     * @return Post
+     */
+    public function setFilename(?string $filename): Post
+    {
+        $this->filename = $filename;
+        return  $this;
+    }
+
+    /**
+     * @return null|File
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+    
+    /**
+     * @param null|File $imageFile
+     * @return Post
+     */
+    public function setImageFile(?File $imageFile): Post
+    {
+        $this->imageFile = $imageFile;
+        return  $this;
+    }
+
 }

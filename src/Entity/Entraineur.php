@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\EntraineurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,22 +30,12 @@ class Entraineur
      */
     private $prenom;
 
-    // /**
-    //  * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
-    //  * @ORM\JoinColumn(nullable=false)
-    //  */
-    // private $user;
-
     /**
-     * @ORM\ManyToOne(targetEntity=Groupe::class, inversedBy="entraineurs")
+     * @ORM\OneToOne(targetEntity=User::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
+     * @Assert\Valid
      */
-    private $groupe;
-
-    /**
-     * @ORM\ManyToMany(targetEntity=Section::class, inversedBy="entraineurs")
-     */
-    private $section;
+    private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="entraineurs")
@@ -52,10 +43,6 @@ class Entraineur
      */
     private $categories;
 
-    public function __construct()
-    {
-        $this->section = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -86,54 +73,18 @@ class Entraineur
         return $this;
     }
 
-    // public function getUser(): ?User
-    // {
-    //     return $this->user;
-    // }
-
-    // public function setUser(User $user): self
-    // {
-    //     $this->user = $user;
-
-    //     return $this;
-    // }
-
-
-    public function getGroupe(): ?Groupe
+    public function getUser(): ?User
     {
-        return $this->groupe;
+        return $this->user;
     }
 
-    public function setGroupe(?Groupe $groupe): self
+    public function setUser(User $user): self
     {
-        $this->groupe = $groupe;
+        $this->user = $user;
 
         return $this;
     }
 
-    /**
-     * @return Collection|Section[]
-     */
-    public function getSection(): Collection
-    {
-        return $this->section;
-    }
-
-    public function addSection(Section $section): self
-    {
-        if (!$this->section->contains($section)) {
-            $this->section[] = $section;
-        }
-
-        return $this;
-    }
-
-    public function removeSection(Section $section): self
-    {
-        $this->section->removeElement($section);
-
-        return $this;
-    }
 
     public function getCategories(): ?Categorie
     {

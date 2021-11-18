@@ -11,8 +11,6 @@ use App\Entity\Position;
 use App\Entity\Domicile;
 use App\Entity\Visiteur;
 use App\Entity\Categorie;
-use App\Entity\Groupe;
-use App\Entity\Section;
 use App\Entity\Tag;
 use App\Entity\Post;
 use App\Entity\User;
@@ -48,9 +46,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         // Définition du nombre d'objets qu'il faut créer.
 
         $groupeCount = 3;
+        $sectionCount = 2;
+        $nbcategories = 7;
         $joueurParGroupe = 16;
         $joueurParCategorie = $groupeCount * $joueurParGroupe;
-        $nbcategories = 7;
         $joueurCount = $joueurParCategorie * $nbcategories;
 
         $this->loadAdmins($manager);
@@ -58,12 +57,10 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $postAndTag = $this->loadPostsAndTags($manager);
 
         // $equipes = $this->loadEquipes($manager, $equipeCount);
-        $groupes = $this->loadGroupes($manager);
-        $sections = $this->loadSections($manager);
         $positions = $this->loadPositions($manager);
-        $categories = $this->loadCategories($manager,$groupes, $sections);
-        $joueurs = $this->loadJoueurs($manager, $sections, $groupes, $categories, $joueurParCategorie, $positions);
-        $entraineurs = $this->loadEntraineurs($manager, $categories, $groupes, $sections );
+        $categories = $this->loadCategories($manager,$sectionCount,$groupeCount);
+        $joueurs = $this->loadJoueurs($manager, $categories, $joueurParGroupe, $positions);
+        $entraineurs = $this->loadEntraineurs($manager, $categories, $categories );
         // $visiteurs = $this->loadVisiteurs($manager, $equipes);
         // $domiciles = $this->loadDomiciles($manager, $equipes, $visiteurs);
         $manager->flush();
@@ -99,108 +96,43 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         return $positions;
     }
 
-    public function loadSections(ObjectManager $manager)
+    public function loadCategories(ObjectManager $manager, int $sectionCount, int $groupeCount)
     {
-        $sections = [];
-        $section = new Section;
-        $section->setName('Male');
-        $manager->persist($section);
-        $sections[]=$section;
-
-        $section = new Section;
-        $section->setName('Female');
-        $manager->persist($section);
-
-        // foreach ($categories as $categorie) {
-        //     $section->addCategories($categories);
-        // }
-
-        $sections[]=$section;
-
-        return $sections;
-        
-
-    }
-    public function loadCategories(ObjectManager $manager, array $groupes, array $sections)
-    {
+        // le nombre de categorie a creer depend du nombre de groupe et de section
 
         $arrayCategoires=[
             ["nom"=>"U8-U9"], ["nom"=>"U10-U11"],["nom"=>"U12-U13"],["nom"=>"U14-U15"],["nom"=>"U16-U17"],["nom"=>"Senior"],["nom"=>"Veteran"],
-    ];
-            
-        $categories = [];
+        ];
+
         foreach ($arrayCategoires as $row) {
-            $categorie = new Categorie;
-            $categorie->setNom($row['nom']);
-            foreach($groupes as $groupe)
-            {
-                $categorie->addGroupe($groupe);
-            }
-            foreach($sections as $section)
-            {
-                $categorie->addSection($section);
-            }
+            for ($i=0; $i <$sectionCount ; $i++) { 
+                for ($g=0; $g <$groupeCount ; $g++) { 
+                    $categorie = new Categorie;
+                    $categorie->setNom($row['nom']);
+                    if ($i>=1) {
+                        $categorie->setSection('Feminine');
+                    }else {
+                        $categorie->setSection('Masculine');
+                    }
+                    if ($g>=1 && $g<2) {
+                        $categorie->setGroupe('B');
+                    }elseif($g>=2 && $g<3){
+                        $categorie->setGroupe('C');
+                    }else {
+                        $categorie->setGroupe('A');
+                    }
+                    $manager->persist($categorie);
+                    $categories[] = $categorie;
+                }
 
-            $manager->persist($categorie);
-            $categories[] = $categorie;
-
+            }
+            
         }
 
-        return $categories;
+            return $categories;
     }
 
-    public function loadGroupes(ObjectManager $manager)
-    {
-        $groupes =[];
-        $groupe = new Groupe();
-        $groupe->setName('A');
-        $groupes[] = $groupe;
-        $manager->persist($groupe);
-
-        $groupe = new Groupe();
-        $groupe->setName('B');
-        $manager->persist($groupe);
-        $groupes[] = $groupe;
-
-        $groupe = new Groupe();
-        $groupe->setName('C');
-        $manager->persist($groupe);
-
-        $groupes[] = $groupe;
-
-        return $groupes;
-
-    }
-
-    public function loadEntraineurs($manager, array $categories, array $groupes, array $sections)
-    {
-        // le nombre d'entraineur depend du nombre de categories, groupes et sections 
-        $entraineurCount = count($categories) * count($groupes) * count($sections);
-        $entraineurs = [];
-        $entraineur = new Entraineur;
-        $entraineur->setNom('test');
-        $entraineur->setPrenom('entraineur');
-        $entraineur->setCategories($categories[6]);
-        $entraineur->setGroupe($groupes[0]);
-        $entraineur->addSection($sections[0]);
-        $manager->persist($entraineur);
-        $entraineurs[]=$entraineur;
-
-        for ($i=1; $i <=$entraineurCount ; $i++) { 
-       
-        $entraineur = new Entraineur;
-        $entraineur->setNom($this->faker->firstName());
-        $entraineur->setPrenom($this->faker->lastName());
-        $entraineur->setCategories($categories[random_int(0,6)]);
-        $entraineur->setGroupe($groupes[random_int(0,2)]);
-        $entraineur->addSection($sections[random_int(0,1)]);
-        $manager->persist($entraineur);
-        $entraineurs[]=$entraineur;
-        }
-        return $entraineurs;
-    }
-
-    public function loadJoueurs(ObjectManager $manager, array $sections, array $groupes, array $categories, int $joueurParCategorie, array $positions )
+    public function loadJoueurs(ObjectManager $manager, array $categories, int $joueurParGroupe, array $positions )
     {
         $equipes = [];
         $equipe = new Equipe();
@@ -208,520 +140,127 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $manager->persist($equipe);
         $equipes[] = $equipe;
         $tilloy = $equipes[0];
-        $maleIndex = 0;
-        $femaleIndex = 0;
-
-        $groupeIndex = 0;
-        $groupe = $groupes[$groupeIndex];
-
-        $male = $sections[$maleIndex];
-        $female = $sections[1];
-
-
-        // $user = new User();
-        // $user->setEmail('joueur@example.com');
-        // // Hachage du mot de passe.
-        // $password = $this->encoder->encodePassword($user, '123');
-        // $user->setPassword($password);
-        // // Le format de la chaîne de caractères ROLE_FOO_BAR_BAZ
-        // // est libre mais il vaut mieux suivre la convention
-        // // proposée par Symfony.
-        // $user->setRoles(['ROLE_JOUEUR']);
-        // // $manager->persist($user);
+       
+        $user = new User();
+        $user->setEmail('joueur@example.com');
+        // Hachage du mot de passe.
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $user->setRoles(['ROLE_JOUEUR']);
+        $manager->persist($user);
 
         $joueur = new Joueur;
         $joueur -> setSexe('M');
         $joueur -> setNom('joueur');
         $joueur -> setPrenom('joueur');
+        $joueur->setUser($user);
         $joueur->setEquipe($tilloy);
-        $joueur->setSection($male);
-        $joueur->setGroupe($groupe);
-        $joueur->setCategorie($categories[5]);
-
-        // $joueur->setUser($user);
         $joueur->setPosition($positions[0]);
+        $joueur->setCategorie($categories[25]);
         $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now'));
         $manager->persist($joueur);
 
-        $joueurs[]=$joueur;
+        foreach ($categories as $categorie) {
+            for ($i=1; $i<= $joueurParGroupe ; $i++) { 
+                $user = new User();
+                $user->setEmail($this->faker->email());
+                // Hachage du mot de passe.
+                $password = $this->encoder->encodePassword($user, '123');
+                $user->setPassword($password);
+                $user->setRoles(['ROLE_JOUEUR']);
+                $manager->persist($user);
+        
+                $joueurs[]=$joueur;
+                $joueur = new Joueur;
+                $joueur -> setSexe('M');
+                $joueur -> setNom($this->faker->firstNameMale());
+                $joueur -> setPrenom($this->faker->lastName());
+                $joueur->setUser($user);
+                $joueur->setEquipe($tilloy);
+                $joueur->setPosition($positions[0]);
+                $joueur->setCategorie($categorie);
+                if ($categorie->getNom()== 'U8-U9') {
+                    # code...
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-9 years', $endDate = 'now -8years'));
+                }
+                elseif ($categorie->getNom()== 'U10-U11') {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-11 years', $endDate = 'now-10years'));
+                } 
+                elseif ($categorie->getNom()== 'U12-U13') {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-13 years', $endDate = 'now-12years'));
+                } 
+                elseif ($categorie->getNom()== 'U14-U15') {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-15 years', $endDate = 'now-14years'));
+                } 
+                elseif ($categorie->getNom()== 'U16-U17') {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-17 years', $endDate = 'now-16years'));
+                } 
+                elseif ($categorie->getNom()== 'Senior') {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-35 years', $endDate = 'now-18years'));
+                } else {
+                    $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now-35years'));
+                }
+                if ($categorie->getSection() == 'Feminine') {
+                    $joueur -> setSexe('F');
+                    $joueur -> setNom($this->faker->firstNameFeMale());
 
-        $equipes = [];
-        $equipe = new Equipe();
-        $equipe->setName("tilloy"); 
-        $manager->persist($equipe);
-        $equipes[] = $equipe;
-        $tilloy = $equipes[0];
-        $maleIndex = 0;
-        $femaleIndex = 0;
-
-        $groupeIndex = 0;
-        $groupe = $groupes[$groupeIndex];
-
-        $male = $sections[$maleIndex];
-        $female = $sections[1];
-
-
-        // $user = new User();
-        // $user->setEmail('joueuse@example.com');
-        // // Hachage du mot de passe.
-        // $password = $this->encoder->encodePassword($user, '123');
-        // $user->setPassword($password);
-        // // Le format de la chaîne de caractères ROLE_FOO_BAR_BAZ
-        // // est libre mais il vaut mieux suivre la convention
-        // // proposée par Symfony.
-        // $user->setRoles(['ROLE_JOUEUR']);
-        // // $manager->persist($user);
-
-        $joueur = new Joueur;
-        $joueur -> setSexe('F');
-        $joueur -> setNom('joueuse');
-        $joueur -> setPrenom('joueuse');
-        $joueur->setEquipe($tilloy);
-        $joueur->setSection($female);
-        $joueur->setGroupe($groupe);
-        $joueur->setCategorie($categories[5]);
-        // $joueur->setUser($user);
-        $joueur->setPosition($positions[0]);
-        $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now'));
-        $manager->persist($joueur);
-
-        $joueurs[]=$joueur;
-
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // // $manager->persist($user);
-            $positionIndex = 0;
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-9 years', $endDate = 'now -8 years'));
-            $joueur->setCategorie($categories[0]);
-            // $joueur->setUser($user);
-            $positionIndex = 0;
+                }
+                
+                $manager->persist($joueur);
+        
+                $joueurs[]=$joueur;
     
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-11 years', $endDate = 'now -10 years'));
-            $joueur->setCategorie($categories[1]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
+            }    
     
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $male = $sections[0];
-            $female = $sections[1];
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-13 years', $endDate = 'now -12 years'));
-            $joueur->setCategorie($categories[2]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
     
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-15 years', $endDate = 'now -14 years'));
-            $joueur->setCategorie($categories[3]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-17 years', $endDate = 'now -16 years'));
-            $joueur->setCategorie($categories[4]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-35 years', $endDate = 'now -18 years'));
-            $joueur->setCategorie($categories[5]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
         }
 
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // // Hachage du mot de passe.
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // // Le format de la chaîne de caractères ROLE_FOO_BAR_BAZ
-            // // est libre mais il vaut mieux suivre la convention
-            // // proposée par Symfony.
-            // $user->setRoles(['ROLE_JOUEUR']);
-
-            // Demande d'enregistrement d'un objet dans la BDD
-            // $manager->persist($user);
-            // Création d'une liste aléatoire de projects.
-            // Cette liste contient exactement le nombre de projects
-            // précisé par $projectsCount.
-
-            // Association d'un teacher et de plusieurs projects.
-
-            // $male = $sections[0];
-            // $female = $sections[1];
-            $joueur = new Joueur;
-            $joueur -> setSexe('M');
-            $joueur -> setNom($this->faker->firstNameMale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($male);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now -35 years'));
-            $joueur->setCategorie($categories[6]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-9 years', $endDate = 'now -8 years'));
-            $joueur->setCategorie($categories[0]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-11 years', $endDate = 'now -10 years'));
-            $joueur->setCategorie($categories[1]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-13 years', $endDate = 'now -12 years'));
-            $joueur->setCategorie($categories[2]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-15 years', $endDate = 'now -14 years'));
-            $joueur->setCategorie($categories[3]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-17 years', $endDate = 'now -16 years'));
-            $joueur->setCategorie($categories[4]);
-            // $joueur->setUser($user);
-            foreach ($positions as $position) {
-                $joueur->setPosition($position);
-            }
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-35 years', $endDate = 'now -18 years'));
-            $joueur->setCategorie($categories[5]);
-            // $joueur->setUser($user);
-            $joueur->setPosition($positions[random_int(0, 11)]);
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
-
-        for ($i=1; $i <$joueurParCategorie; $i++) { 
-            // $user = new User();
-            // $user->setEmail($this->faker->email());
-            // $password = $this->encoder->encodePassword($user, '123');
-            // $user->setPassword($password);
-            // $user->setRoles(['ROLE_JOUEUR']);
-            // $manager->persist($user);
-            $joueur = new Joueur;
-            $joueur -> setSexe('F');
-            $joueur -> setNom($this->faker->firstNameFemale ());
-            $joueur -> setPrenom($this->faker->lastName());
-            $joueur->setEquipe($tilloy);
-            $joueur->setSection($female);
-            $joueur->setGroupe($groupes[random_int(0, 2)]);
-            $joueur -> setCartonJaune(random_int(0,10));
-            $joueur -> setCartonRouge(random_int(0,10));
-            $joueur -> setBut(random_int(0,10));
-            $joueur -> setMatchJouer(random_int(0,10));
-            $joueur->setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now -35 years'));
-            $joueur->setCategorie($categories[6]);
-            // $joueur->setUser($user);
-            $joueur->setPosition($positions[random_int(0, 11)]);
-    
-            $manager->persist($joueur);
-
-            $joueurs[] = $joueur;
-        }
         return $joueurs;
 
-          
     }
+
+    public function loadEntraineurs($manager, array $categories)
+    {
+        $entraineurs = [];
+
+        $user = new User();
+        $user->setEmail('entraineur@example.com');
+        // Hachage du mot de passe.
+        $password = $this->encoder->encodePassword($user, '123');
+        $user->setPassword($password);
+        $user->setRoles(['ROLE_ENTRAINEUR']);
+        $manager->persist($user);
+
+        $entraineur = new Entraineur;
+        $entraineur->setNom('test');
+        $entraineur->setPrenom('entraineur');
+        $entraineur->setCategories($categories[20]);
+        $entraineur->setUser($user);
+        $manager->persist($entraineur);
+        $entraineurs[]=$entraineur;
+
+        
+        foreach ($categories as $categorie) {
+            # code...
+            $user = new User();
+            $user->setEmail($this->faker->email());
+            $password = $this->encoder->encodePassword($user, '123');
+            $user->setPassword($password);
+            $user->setRoles(['ROLE_ENTRAINEUR']);
+            $manager->persist($user);
+       
+            $entraineur = new Entraineur;
+            $entraineur->setNom($this->faker->firstName());
+            $entraineur->setPrenom($this->faker->lastName());
+            $entraineur->setCategories($categorie);
+            $entraineur->setUser($user);
+            $manager->persist($entraineur);
+            $entraineurs[]=$entraineur;
+        
+        }
+        return $entraineurs;
+    }
+
 
     // public function loadJourners(ObjectManager $manager)
     // {

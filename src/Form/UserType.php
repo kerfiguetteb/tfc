@@ -23,6 +23,7 @@ class UserType extends AbstractType
                 'choices'  => [
                     'admin' => 'ROLE_ADMIN',
                     'joueur' => 'ROLE_JOUEUR',
+                    'entraineur' => 'ROLE_ENTRAINEUR',
                 ],
                 'multiple' => true,
                 'expanded' => true,

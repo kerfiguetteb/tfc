@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Entity\Equipe;
+use App\Entity\Categorie;
 use App\Entity\Joueur;
 use App\Entity\Tag;
 use App\Entity\User;
@@ -12,6 +12,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+
 
 class JoueurRegistrationType extends AbstractType
 {
@@ -24,19 +26,22 @@ class JoueurRegistrationType extends AbstractType
             ])
             ->add('nom')
             ->add('prenom')
-            ->add('dateDeNaissance')
+            ->add('dateDeNaissance', DateType::class, [
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd', ])
+            
             ->add('sexe')
-            ->add('equipe', EntityType::class, [
+            ->add('categorie', EntityType::class, [
                 // looks for choices from this entity
-                'class' => Equipe::class,
+                'class' => Categorie::class,
 
                 // uses the User.username property as the visible option string
-                'choice_label' => function (Equipe $equipe) {
-                    return "{$equipe->getName()}";
+                'choice_label' => function (Categorie $categorie) {
+                    return "{$categorie->getNom()}";
                 },
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('s')
-                        ->orderBy('s.name', 'ASC')
+                        ->orderBy('s.nom', 'ASC')
                     ;
                 },
             ])

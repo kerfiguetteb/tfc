@@ -40,21 +40,25 @@ security:
         # Tous les chemins commençant par "/joueur/id/edit" ne sont accessibles qu'aux roles admin ou joueur
         # La partie "id" du chemin doit être une suite chiffres
         # Cette route correspond à la modification d'un joueur
-        - { path: "^/joueur/[0-9]+/edit", roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        - { path: "^/joueur/[0-9]+/edit", roles: [ROLE_ADMIN,ROLE_JOUEUR,ROLE_ENTRAINEUR] }
+        - { path: "^/entraineur/[0-9]+/edit", roles: [ROLE_ADMIN] }
 
         # Tous les chemins demandés commençant par "/joueur/id" ne sont accessibles qu'aux roles admin ou joueur.
         # Cette route correspond à la consultation ou la suppression d'un joueur
         # Pour bloquer l'accès à la suppression d'un joueur par un role joueur,
         # on va implémenter la détection dans le contrôleur.
-        - { path: "^/joueur/[0-9]+/?$", roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        - { path: "^/joueur/[0-9]+/?$", roles: [ROLE_ADMIN,ROLE_JOUEUR,ROLE_ENTRAINEUR] }
+        - { path: "^/entraineur/[0-9]+/?$", roles: [ROLE_ADMIN] }
 
         # Tous les chemins commençant par "/joueur/new" ne sont accessibles qu'aux roles admin
         # Cette route correspond à la création d'un joueur
-        - { path: "^/joueur/new", roles: [ROLE_ADMIN] }
+        - { path: "^/joueur/new", roles: [ROLE_ADMIN,ROLE_ENTRAINEUR] }
+        - { path: "^/entraineur/new", roles: [ROLE_ADMIN,ROLE_ENTRAINEUR] }
 
         # Tous les chemins commençant par "/joueur" ne sont accessibles qu'aux roles admin ou joueur.
         # Cette route correspond à la consultation de la liste des joueurs
-        - { path: ^/joueur, roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        - { path: ^/joueur, roles: [ROLE_ADMIN,ROLE_JOUEUR,ROLE_ENTRAINEUR] }
+        - { path: ^/entraineur, roles: [ROLE_ADMIN,ROLE_ENTRAINEUR] }
 
 
 
@@ -63,24 +67,24 @@ security:
         # Cette route correspond à la modification d'une school year
         # Pour bloquer l'accès à la suppression d'une school year par un role joueur,
         # on va implémenter la détection dans le contrôleur.
-        - { path: "^/equipe/[0-9]+/edit", roles: [ROLE_ADMIN] }
+        - { path: "^/equipe/[0-9]+/edit", roles: [ROLE_ADMIN, ROLE_ENTRAINEUR] }
 
         # Tous les chemins demandés commençant par "/equipe/id" ne sont accessibles qu'aux roles admin ou joueur.
-        # Cette route correspond à la consultation ou la suppression d'une school year
-        # Pour bloquer l'accès à la suppression d'un school year par un role joueur,
+        # Cette route correspond à la consultation ou la suppression d'une equipe
+        # Pour bloquer l'accès à la suppression d'une equipe par un role joueur,
         # on va implémenter la détection dans le contrôleur.
-        - { path: "^/equipe/[0-9]+/?$", roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        - { path: "^/equipe/[0-9]+/?$", roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }
 
         # Tous les chemins commençant par "/equipe/new" ne sont accessibles qu'aux roles admin
-        # Cette route correspond à la création d'une school year
+        # Cette route correspond à la création d'une equipe
         - { path: "^/equipe/new", roles: [ROLE_ADMIN] }
 
-        # Tous les chemins commençant par "/equipe4" ne sont accessibles qu'aux roles admin ou JOUEUR.
-        # Cette route correspond à la consultation de la liste des school years
-        - { path: ^/equipe, roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        # Tous les chemins commençant par "/equipe" ne sont accessibles qu'aux roles admin ou JOUEUR.
+        # Cette route correspond à la consultation de la liste des equipes
+        - { path: ^/equipe, roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }
 
 
 
         # Tous les chemins commençant par "/search" ne sont accessibles qu'aux roles admin ou JOUEUR.
         # Cette route correspond à la recherche de JOUEURs
-        - { path: ^/search, roles: [ROLE_ADMIN, ROLE_JOUEUR] }
+        - { path: ^/search, roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }
