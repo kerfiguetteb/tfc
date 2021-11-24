@@ -22,8 +22,9 @@ class PostType extends AbstractType
             ->add('publishDate', DateType::class, [
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd', ])
-            ->add('imageFile', FileType::class,[
-                'required' => false
+            ->add('pictureFiles', FileType::class,[
+                'required' => false,
+                'multiple' => true
             ])
             ->add('tags', EntityType::class, [
                 'class' => Tag::class,

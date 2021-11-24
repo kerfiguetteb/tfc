@@ -6,11 +6,10 @@ use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
- * @Vich\Uploadable
  */
 class Post
 {
@@ -20,19 +19,6 @@ class Post
      * @ORM\Column(type="integer")
      */
     private $id;
-
-    /**
-     * @var string|null
-     * @ORM\Column(type="string", length=255)
-     */
-
-    private $filename;
-
-    /**
-     * @var File|null
-     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName")
-     */
-    private $imageFile;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -54,9 +40,24 @@ class Post
      */
     private $tags;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="post")
+     */
+    private $pictures;
+
+    /**
+     * @Assert\All({
+     *   @Assert\Image(mimeTypes="image/jpeg")
+     * })
+     */
+    private $pictureFiles;
+
+
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->pictures = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,6 +100,7 @@ class Post
 
         return $this;
     }
+    
 
     /**
      * @return Collection|Tag[]
@@ -129,39 +131,57 @@ class Post
 
 
     /**
-     * @return null|string
+     * @return Collection|Picture[]
      */
-    public function getFilename(): ?string
+    public function getPictures(): Collection
     {
-        return $this->filename;
+        return $this->pictures;
     }
-    
-    /**
-     * @param null|string $filename
-     * @return Post
-     */
-    public function setFilename(?string $filename): Post
+
+    public function addPicture(Picture $picture): self
     {
-        $this->filename = $filename;
-        return  $this;
+        if (!$this->pictures->contains($picture)) {
+            $this->pictures[] = $picture;
+            $picture->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removePicture(Picture $picture): self
+    {
+        if ($this->pictures->removeElement($picture)) {
+            // set the owning side to null (unless already changed)
+            if ($picture->getPost() === $this) {
+                $picture->setPost(null);
+            }
+        }
+
+        return $this;
+    }
+        /**
+     * @return mixed
+     */
+    public function getPictureFiles()
+    {
+        return $this->pictureFiles;
     }
 
     /**
-     * @return null|File
-     */
-    public function getImageFile(): ?File
-    {
-        return $this->imageFile;
-    }
-    
-    /**
-     * @param null|File $imageFile
+     * @param mixed $pictureFiles
      * @return Post
      */
-    public function setImageFile(?File $imageFile): Post
+    public function setPictureFiles($pictureFiles): self
     {
-        $this->imageFile = $imageFile;
-        return  $this;
+        foreach($pictureFiles as $pictureFile) {
+            $picture = new Picture();
+            $picture->setImageFile($pictureFile);
+            $this->addPicture($picture);
+        }
+        $this->pictureFiles = $pictureFiles;
+        return $this;
     }
+
+
 
 }
