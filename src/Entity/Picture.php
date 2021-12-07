@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Gedmo\Mapping\Annotation as Gedmo;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PictureRepository")
@@ -25,12 +27,12 @@ class Picture
      * @Assert\Image(
      *     mimeTypes="image/jpeg"
      * )
-     * @Vich\UploadableField(mapping="property_image", fileNameProperty="filename")
+     * @Vich\UploadableField(mapping="post_image", fileNameProperty="filename")
      */
     private $imageFile;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $filename;
 

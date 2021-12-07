@@ -5,6 +5,16 @@
 {% block body %}
     <h1>Post index</h1>
 <div class="container mt-4">
+    {# <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Titre</th>
+                <th>Body</th>
+                <th>PublishDate</th>
+                <th>actions</th>
+            </tr>
+        </thead> #}
         {% for post in posts %}
  <div class="card">
     {% for picture in post.pictures %}
@@ -20,6 +30,12 @@
         <h5 class="card-title">{{ post.titre }}</h5>
         <p class="card-text">{{ post.body }}</p>
         <p class="card-text"><small class="text-muted">{{ post.publishDate ? post.publishDate|date('Y-m-d') : '' }}</small></p>
+        <a href="{{ path('admin.post.edit', {'id': post.id}) }}" class="btn btn-primary">edit</a>
+          <form method="post" action="{{ path('admin.post.delete', {id: post.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
+            <input type="hidden" name="_method" value="DELETE">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
+            <button class="btn btn-danger">Supprimer</button>
+          </form>
     </div>
 </div>
         {% else %}
@@ -28,7 +44,7 @@
             </tr>
         {% endfor %}
     <div class="text-center">
-    <a href="{{ path('post_new') }}" class="btn btn-secondary">Create new</a>
+    <a href="{{ path('admin.post.create') }}" class="btn btn-secondary">Create new</a>
     </div>
 </div>
     <div>

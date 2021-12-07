@@ -41,15 +41,15 @@ class Post
     private $tags;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="post")
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="post",cascade={"persist"})
      */
     private $pictures;
 
-    /**
-     * @Assert\All({
-     *   @Assert\Image(mimeTypes="image/jpeg")
-     * })
-     */
+    // /**
+    //  * @Assert\All({
+    //  *   @Assert\Image(mimeTypes="image/jpeg")
+    //  * })
+    //  */
     private $pictureFiles;
 
 
@@ -138,6 +138,14 @@ class Post
         return $this->pictures;
     }
 
+    public function getPicture(): ?Picture
+    {
+        if ($this->pictures->isEmpty()) {
+            return null;
+        }
+        return $this->pictures->first();
+    }
+
     public function addPicture(Picture $picture): self
     {
         if (!$this->pictures->contains($picture)) {
@@ -150,7 +158,8 @@ class Post
 
     public function removePicture(Picture $picture): self
     {
-        if ($this->pictures->removeElement($picture)) {
+        if ($this->pictures->contains($picture)) {
+            $this->pictures->removeElement($picture);
             // set the owning side to null (unless already changed)
             if ($picture->getPost() === $this) {
                 $picture->setPost(null);
