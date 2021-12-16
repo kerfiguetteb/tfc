@@ -3,10 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\Joueur;
+use App\Entity\Entraineur;
 use App\Entity\User;
 use App\Form\JoueurType;
 use App\Repository\JoueurRepository;
 use App\Repository\EntraineurRepository;
+use App\Repository\CategorieRepository;
+use App\Repository\EquipeRepository;
+use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,12 +18,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-
 /**
  * @Route("/joueur")
  */
 class JoueurController extends AbstractController
+
 {
+    use AlgoCategorieTrait;
+   
+
     /**
      * @Route("/", name="joueur_index", methods={"GET"})
      */
@@ -27,22 +34,34 @@ class JoueurController extends AbstractController
     {
         $joueurs = $joueurRepository->findAll();
 
+
         if ($this->isGranted('ROLE_JOUEUR')) {
             $user = $this->getUser();
             //on récupere le profil joueur rattacher au compte user
             $joueur = $joueurRepository->findOneByUser($user);
             $categorie = $joueur->getCategorie();
+            $categorieId = $joueur->getCategorie()->getId();
             $joueurs = $categorie->getJoueurs();
+            $entraineur = $entraineurRepository->findByCategorie($categorieId);
+            dump($entraineur);
+            dump($categorie);
 
-        }elseif ($this->isGranted('ROLE_ENTRAINEUR')) {
-            $user = $this->getUser();
-            //on récupere le profil joueur rattacher au compte user
-            $entraineur = $entraineurRepository->findOneByUser($user);
-            $categorie = $entraineur->getCategories();
-            $joueurs = $categorie->getJoueurs();
+            $joueurActive = $joueurRepository->findOneByUser($user);
         }
+        // elseif ($this->isGranted('ROLE_ENTRAINEUR')) {
+        //     $user = $this->getUser();
+        //     //on récupere le profil joueur rattacher au compte user
+        //     $entraineur = $entraineurRepository->findOneByUser($user);
+        //     $categorie = $entraineur->getCategories();
+        //     $joueur = $categorie->getJoueurs();
+        // }
+
         return $this->render('joueur/index.html.twig', [
             'joueurs' => $joueurs,
+            'categorie' => $categorie,
+            'entraineur' => $entraineur,
+            'joueurActive' => $joueurActive,
+            // 'user' => $user
         ]);
     }
 
@@ -82,23 +101,38 @@ class JoueurController extends AbstractController
      */
     public function show(Joueur $joueur, JoueurRepository $joueurRepository): Response
     {
-        $response = $this->redirectJoueur('joueur_show', $joueur, $joueurRepository);
 
-        if ($response) {
-            return $response;
-        }
+        $birthday = $joueur->getDateDeNaissance();
+        $today = new \DateTime(date('Y-m-d H:i:s'));
+        $ageDiff = $birthday->diff($today);
+        $age = $ageDiff->format('%y');
+        $user = $this->getUser();
+        $userJoueur = $joueur->getUser();;
+
+        dump($user);
+        dump($userJoueur);
+
+
+        // return $this->redirectToRoute('joueur_show', ['id'=>$userJoueur ->getId()], Response::HTTP_SEE_OTHER);
+
 
         return $this->render('joueur/show.html.twig', [
             'joueur' => $joueur,
+            'age' => $age,
+            'userJoueur' => $userJoueur,
+            'user' => $user
         ]);
     }
-
+   
     /**
      * @Route("/{id}/edit", name="joueur_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Joueur $joueur, JoueurRepository $joueurRepository): Response
+    public function edit(Request $request, Joueur $joueur, JoueurRepository $joueurRepository,
+     EquipeRepository $equipeRepository,
+     CategorieRepository $categorieRepository,
+      UserPasswordEncoderInterface $passwordEncoder): Response
     {
-        $response = $this->redirectJoueur('joueur_show', $joueur, $joueurRepository);
+        $response = $this->redirectJoueur('joueur_edit', $joueur, $joueurRepository);
 
         if ($response) {
             return $response;
@@ -106,13 +140,33 @@ class JoueurController extends AbstractController
 
         $form = $this->createForm(JoueurType::class, $joueur);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $sexe = $form->getData()->getSexe();
+            $birthday = $form->getData()->getDateDeNaissance();
+            $today = new \DateTime(date('Y-m-d H:i:s'));
+            $age = $birthday->diff($today);
+            $equipe = $equipeRepository->find(1);
+            $tilloy = $equipe;
+            
+            $this->CategoriOfPlayer($sexe,$age,$joueurRepository,$equipeRepository,$categorieRepository,$joueur,$tilloy);
 
+            $user = $joueur->getUser();
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $form->get('user')->get('plainPassword')->getData()
+                    )
+                );
+            $user->setRoles(['ROLE_JOUEUR']);
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($joueur);
+                $entityManager->flush();
+    
+    
+            // return $this->redirectToRoute('joueur_index');
             return $this->redirectToRoute('joueur_index', [], Response::HTTP_SEE_OTHER);
         }
-
+        
         return $this->render('joueur/edit.html.twig', [
             'joueur' => $joueur,
             'form' => $form->createView(),
@@ -139,16 +193,10 @@ class JoueurController extends AbstractController
 
     private function redirectJoueur(string $route, Joueur $joueur, JoueurRepository $joueurRepository)
     {
-        // On vérifie si l'utilisateur est un student
-        // Note : on peut aussi utiliser in_array('ROLE_STUDENT', $user->getRoles()) au
-        // lieu de $this->isGranted('ROLE_STUDENT').
+        // On vérifie si l'utilisateur est un Joueur
         if ($this->isGranted('ROLE_JOUEUR')) {
-            // L'utilisateur est un student
-            
-            // Récupération du compte de l'utilisateur qui est connecté
             $user = $this->getUser();
     
-            // Récupèration du profil student
             $userJoueur = $joueurRepository->findOneByUser($user);
 
             // Comparaison du profil demandé par l'utilisateur et le profil de l'utilisateur
@@ -163,5 +211,7 @@ class JoueurController extends AbstractController
         // Si aucune redirection n'est nécessaire, on renvoit une valeur nulle
         return null;
     }
+
+
 
 }

@@ -17,12 +17,11 @@ Trait ProfileRepositoryTrait
     /**
      * Cette fonction permet de récupérer un profil à partir d'un user.
      * Un profil n'est pas un type de données strict, c'est juste une
-     * appelation qui permet de désigner un objet de type Client,
-     * Student ou Teacher.
+     * appelation qui permet de désigner un objet de type 
      *
      * L'annotation param permet de donner des indications sur le
      * paramètre d'une fonction.
-     * @param $role string optional nom d'un rôle comme 'ROLE_ADMIN', 'ROLE_STUDENT', etc
+     * @param $role string optional nom d'un rôle comme 'ROLE_ADMIN', 'ROLE_JOUEUR', etc
      * L'annotation return permet de donner des indications sur la
      * valeur de retour d'une fonction. La barre verticale dans
      * Foo|Bar|Baz permet de préciser que la valeur de retour est de

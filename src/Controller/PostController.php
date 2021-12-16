@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PostController extends AbstractController
 {
     /**
-     * @Route("/actu", name="post_index", methods={"GET"})
+     * @Route("/", name="post_index", methods={"GET"})
      */
     public function index(PaginatorInterface $paginator, PostRepository $postRepository, Request $request): Response
     {       

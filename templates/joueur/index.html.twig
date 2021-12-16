@@ -3,48 +3,40 @@
 {% block title %}Joueur{% endblock %}
 
 {% block body %}
-    <h1>Joueur</h1>
-    
+<div class="container mt-4">
+    <h1>{{categorie.nom}} {{categorie.groupe}}</h1>
+    <a href="{{ path('entraineur_show', {'id': entraineur.id}) }}"><h2 style="text-align:center">{{entraineur.nom}} {{entraineur.prenom}}</h2></a>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Sexe</th>
-                <th>CartonJaune</th>
-                <th>CartonRouge</th>
-                <th>But</th>
-                <th>MatchJouer</th>
-                <th>DateDeNaissance</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for joueur in joueurs %}
-            <tr>
-                <td>{{ joueur.id }}</td>
-                <td>{{ joueur.nom }}</td>
-                <td>{{ joueur.prenom }}</td>
-                <td>{{ joueur.sexe }}</td>
-                <td>{{ joueur.cartonJaune }}</td>
-                <td>{{ joueur.cartonRouge }}</td>
-                <td>{{ joueur.but }}</td>
-                <td>{{ joueur.matchJouer }}</td>
-                <td>{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</td>
-                <td>
-                    <a href="{{ path('joueur_show', {'id': joueur.id}) }}">show</a>
-                    <a href="{{ path('joueur_edit', {'id': joueur.id}) }}">edit</a>
-                </td>
-            </tr>
+
+    <div class="row flex justify-content-center flex-wrap">
+    {% for joueur in joueurs|filter(joueur => joueur != joueurActive) %}
+        <div class="card-deck col-md-3">
+        <div class="card mb-4">
+            {# {% if joueur.picture %} #}
+            {# {% for picture in joueur.pictures %} #}
+                
+                {# <img src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width: 100%; height:auto;"> #}
+                {# {% else %} #}
+                <img src="{{ '/images/homme.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style= "height:auto; margin:15px">
+            {# {% endfor %} #}
+            {# {% endif %} #}
+            <div class="card-body" style="text-align:center">
+            <h5 class="card-title"> {{ joueur.nom }} {{ joueur.prenom }}</h5>
+            {# <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p> #}
+            <p class="card-text"><small class="text-muted">{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</small></p>
+             <a href="{{ path('joueur_show', {'id': joueur.id}) }}" class="btn btn-primary">Voir Profil</a>
+            </div>
+        </div>
+        </div>
         {% else %}
             <tr>
                 <td colspan="11">no records found</td>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
+    {% endfor %}
+    </div>
+        {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('joueur_new') }}">Create new</a>
+        {% endif %}
+</div>
+
 {% endblock %}

@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Joueur{% endblock %}
+
+{% block body %}
+    <h1>Joueur</h1>
+  <div class="jumbotron">
+    <div class="container">
+        {% if joueurSearchForm is not defined %}
+        {% set joueurSearchForm = joueurSearchFormViewFactory.create %}
+        {% endif %}
+
+      {{ form_start(joueurSearchForm) }}
+      <div class="form-row align-items-end">
+        <div class="col">
+          {{ form_row(joueurSearchForm.section) }}
+        </div>
+        <div class="col">
+          {{ form_row(joueurSearchForm.categorie) }}
+        </div>
+        <div class="col">
+          {{ form_row(joueurSearchForm.groupe) }}
+        </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <button class="btn btn-primary">Rechercher</button>
+          </div>
+        </div>
+      </div>
+      {{ form_end(joueurSearchForm) }}
+    </div>
+  </div>
+    
+    <div>
+    <a href="{{ path('admin_joueur_new') }}" class="btn btn-secondary"style="margin:15px">Creer un nouveau joueur</a>
+    </div>
+
+   
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>Section</th>
+                <th>Categorie</th>
+                <th>Groupe</th>
+                {# <th>Poste</th> #}
+                <th>Carton Jaune</th>
+                <th>Carton Rouge</th>
+                <th>But</th>
+                <th>Match Jouer</th>
+                <th>Date De Naissance</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for joueur in joueurs %}
+            <tr>
+                <td>{{ joueur.id }}</td>
+                <td>{{ joueur.nom }}</td>
+                <td>{{ joueur.prenom }}</td>
+            {# {% for categorie in joueur.categories %} #}
+                <td>{{ joueur.categorie.section }}</td>
+                <td>{{ joueur.categorie.nom }}</td>
+                <td>{{ joueur.categorie.groupe }}</td>
+                {# <td>{{ joueur.position.name }}</td> #}
+            {# {% endfor %} #}
+          {# {% endif %} #}
+                <td>{{ joueur.cartonJaune }}</td>
+                <td>{{ joueur.cartonRouge }}</td>
+                <td>{{ joueur.but }}</td>
+                <td>{{ joueur.matchJouer }}</td>
+                <td>{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</td>
+                <td>
+                    <a href="{{ path('admin_joueur_show', {'id': joueur.id}) }}">show</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('admin_joueur_edit', {'id': joueur.id}) }}">edit</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="11">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('admin_joueur_index') }}">liste compléte</a>
+{% endblock %}
+
+

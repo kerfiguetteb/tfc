@@ -23,21 +23,38 @@ class CategorieRepository extends ServiceEntityRepository
      * @return Categorie[] Returns an array of Categorie objects
      */
 
-     public function findByGroupeAndsection($g, $s)
-     {
-        return $this->createQueryBuilder('c')
-        ->where('c.groupe LIKE :g')
-        ->andWhere('c.section LIKE :s')
-        ->setParameter('g', "%{$g}%")
-        ->setParameter('s', "%{$s}%")
-        // ->orderBy('s.firstname', 'ASC')
-        // ->orderBy('s.lastname', 'ASC')
-        ->setMaxResults(10)
-        ->getQuery()
-        ->getResult()
-    ;
+    public function findBySectionGroupeName($s, $g, $n)
+    {
+       return $this->createQueryBuilder('c')
+       ->Where('c.section LIKE :s')
+       ->andwhere('c.groupe LIKE :g')
+       ->andWhere('c.nom LIKE :n')
+       ->setParameter('g', "%{$g}%")
+       ->setParameter('s', "%{$s}%")
+       ->setParameter('n', "%{$n}%")
+       // ->orderBy('s.firstname', 'ASC')
+       // ->orderBy('s.lastname', 'ASC')
+       ->setMaxResults(10)
+       ->getQuery()
+       ->getResult()
+   ;
 
-     }
+    }
+    public function findBySectionName($s,$n)
+    {
+       return $this->createQueryBuilder('c')
+       ->Where('c.section LIKE :s')
+       ->andWhere('c.nom LIKE :n')
+       ->setParameter('s', "%{$s}%")
+       ->setParameter('n', "%{$n}%")
+       // ->orderBy('s.firstname', 'ASC')
+       // ->orderBy('s.lastname', 'ASC')
+       ->setMaxResults(10)
+       ->getQuery()
+       ->getResult()
+   ;
+
+    }
 
 
     /*

@@ -27,15 +27,22 @@ class JoueurRepository extends ServiceEntityRepository
      */
         
 
-    /*
-    public function findOneBySomeField($value): ?Joueur
+    public function findBySectionGroupeName($s,$g, $n)
     {
-        return $this->createQueryBuilder('j')
-            ->andWhere('j.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+       return $this->createQueryBuilder('j')
+       ->innerJoin('j.categorie', 'g')
+       ->Where('g.section LIKE :section')
+       ->andWhere('g.groupe LIKE :groupe')
+       ->andWhere('g.nom LIKE :nom')
+       ->setParameter('groupe', "%{$g}%")
+       ->setParameter('section', "%{$s}%")
+       ->setParameter('nom', "%{$n}%")
+       // ->orderBy('s.firstname', 'ASC')
+       // ->orderBy('s.lastname', 'ASC')
+       ->setMaxResults(10)
+       ->getQuery()
+       ->getResult()
+   ;
+
     }
-    */
 }

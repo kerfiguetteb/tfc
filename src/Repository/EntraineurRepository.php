@@ -27,15 +27,14 @@ class EntraineurRepository extends ServiceEntityRepository
     
     
 
-    /*
-    public function findOneBySomeField($value): ?Entraineur
+    public function findByCategorie($value)
     {
-        return $this->createQueryBuilder('e')
-            ->andWhere('e.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('c')
+            ->innerJoin('c.categories' ,'e')
+            ->Where('e.id = :value')
+            ->setParameter('value', $value)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
 }

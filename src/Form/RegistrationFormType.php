@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -26,22 +27,30 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
-            ->add('plainPassword', PasswordType::class, [
-                // instead of being set onto the object directly,
-                // this is read and encoded in the controller
-                'label' => 'Password',
+            // Ajout d'un champ nommé plainPassword dans le formulaire.
+            ->add('plainPassword', RepeatedType::class, [
+                // Le champ plainPassword ne correspond à aucun attribut de
+                // l'entité User. C'est pourquoi il ne doit pas être affecté
+                // à l'instance de l'entité. L'option 'mapped' => false
+                // permet de désactiver l'affectation automatique. 
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'type' => PasswordType::class,
+                // 'invalid_message' => 'The password fields must match.',
+                'options' => ['attr' => [
+                    'class' => 'password-field',
+                    'autocomplete' => 'new-password'
+                ]],
+                'required' => true,
+                'first_options'  => ['label' => 'Password'],
+                'second_options' => ['label' => 'Repeat Password'],
                 'constraints' => [
-                    new NotBlank([
-                        'message' => 'Please enter a password',
-                    ]),
+                    // Obligation de valeurs de longueur comprise entre 6 et 190.
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
+                    new NotBlank(),
                 ],
             ])
         ;

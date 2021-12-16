@@ -3,11 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\JoueurRepository;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+
 
 /**
  * @ORM\Entity(repositoryClass=JoueurRepository::class)
+ * @vich\Uploadable()
  */
 class Joueur
 {
@@ -17,6 +23,23 @@ class Joueur
      * @ORM\Column(type="integer")
      */
     private $id;
+    
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255)
+     */
+    private $filename;
+
+    /**
+     * @var File|null
+     * @Assert\Image(
+     *   
+     * )
+     * @Vich\UploadableField(mapping="joueur_image", fileNameProperty="filename")
+     */
+    private $imageFile;
+
+
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -80,9 +103,13 @@ class Joueur
 
     /**
      * @ORM\ManyToOne(targetEntity=Position::class, inversedBy="joueurs")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $position;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $updated_at;
 
 
     public function getId(): ?int
@@ -230,6 +257,57 @@ class Joueur
     public function setPosition(?Position $position): self
     {
         $this->position = $position;
+
+        return $this;
+    }
+    /**
+     * @return null|string
+     */
+    public function getFilename(): ?string
+    {
+        return $this->filename;
+    }
+
+    /**
+     * @param null|string $filename
+     * @return Joueur
+     */
+    public function setFilename(?string $filename): Joueur
+    {
+        $this->filename = $filename;
+        return $this;
+    }
+
+   
+    /**
+     * @return null|File
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * @param null|File $imageFile
+     * @return Joueur
+     */
+    public function setImageFile(?File $imageFile): Joueur
+    {
+        $this->imageFile = $imageFile;
+        if ($this->imageFile instanceof UploadedFile) {
+            $this->updated_at = new \DateTime('now');
+        }
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

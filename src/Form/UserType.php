@@ -19,15 +19,15 @@ class UserType extends AbstractType
     {
         $builder
             ->add('email')
-            ->add('roles', ChoiceType::class, [
-                'choices'  => [
-                    'admin' => 'ROLE_ADMIN',
-                    'joueur' => 'ROLE_JOUEUR',
-                    'entraineur' => 'ROLE_ENTRAINEUR',
-                ],
-                'multiple' => true,
-                'expanded' => true,
-            ])
+            // ->add('roles', ChoiceType::class, [
+            //     'choices'  => [
+            //         'admin' => 'ROLE_ADMIN',
+            //         'joueur' => 'ROLE_JOUEUR',
+            //         'entraineur' => 'ROLE_ENTRAINEUR',
+            //     ],
+            //     'multiple' => true,
+            //     'expanded' => true,
+            // ])
             // Ajout d'un champ nommé plainPassword dans le formulaire.
             ->add('plainPassword', RepeatedType::class, [
                 // Le champ plainPassword ne correspond à aucun attribut de
@@ -42,8 +42,8 @@ class UserType extends AbstractType
                     'autocomplete' => 'new-password'
                 ]],
                 'required' => true,
-                'first_options'  => ['label' => 'Password'],
-                'second_options' => ['label' => 'Repeat Password'],
+                'first_options'  => ['label' => 'Mot de passe'],
+                'second_options' => ['label' => 'Repeter mot de passe'],
                 'constraints' => [
                     // Obligation de valeurs de longueur comprise entre 6 et 190.
                     new Length([

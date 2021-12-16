@@ -10,6 +10,8 @@ use App\Entity\Joueur;
 use App\Repository\JoueurRepository;
 use App\Entity\Categorie;
 use App\Repository\CategorieRepository;
+use App\Entity\Entraineur;
+use App\Repository\EntraineurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,6 +23,7 @@ class TestController extends AbstractController
      */
     public function index(
         EquipeRepository $equipeRepository, 
+        EntraineurRepository $entraineurRepository, 
         DomicileRepository $domicileRepository, 
         JoueurRepository $joueurRepository,
         CategorieRepository $categorieRepository
@@ -39,9 +42,17 @@ class TestController extends AbstractController
         $categories = $categorieRepository->findAll();
         dump($categories);
 
-        $categorie = $categorieRepository->findByGroupeAndsection('A','Masculine');
-        dump($categorie);
+
+        // $categorie = $categorieRepository->findByGroupeAndsection('A','Masculine');
+        // dump($categorie);
     
+        $joueurs = $joueurRepository->findBySectionGroupeName('Masculine','A','U8-U9');
+        dump($joueurs);
+
+        $categorieId = 26;
+        $entraineur = $entraineurRepository->findByCategorie($categorieId);
+        dump($entraineur);
+
         exit();
     }
 }

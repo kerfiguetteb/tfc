@@ -48,7 +48,7 @@ security:
         # Pour bloquer l'accès à la suppression d'un joueur par un role joueur,
         # on va implémenter la détection dans le contrôleur.
         - { path: "^/joueur/[0-9]+/?$", roles: [ROLE_ADMIN,ROLE_JOUEUR,ROLE_ENTRAINEUR] }
-        - { path: "^/entraineur/[0-9]+/?$", roles: [ROLE_ADMIN] }
+        # - { path: "^/entraineur/[0-9]+/?$", roles: [ROLE_ADMIN] }
 
         # Tous les chemins commençant par "/joueur/new" ne sont accessibles qu'aux roles admin
         # Cette route correspond à la création d'un joueur
@@ -58,7 +58,7 @@ security:
         # Tous les chemins commençant par "/joueur" ne sont accessibles qu'aux roles admin ou joueur.
         # Cette route correspond à la consultation de la liste des joueurs
         - { path: ^/joueur, roles: [ROLE_ADMIN,ROLE_JOUEUR,ROLE_ENTRAINEUR] }
-        - { path: ^/entraineur, roles: [ROLE_ADMIN,ROLE_ENTRAINEUR] }
+        # - { path: ^/entraineur, roles: [ROLE_ADMIN,ROLE_ENTRAINEUR] }
 
 
 

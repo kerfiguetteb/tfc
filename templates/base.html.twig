@@ -5,6 +5,10 @@
         <title>{% block title %}Welcome!{% endblock %}</title>
         {# Run `composer require symfony/webpack-encore-bundle`
            and uncomment the following Encore helpers to start using Symfony UX #}
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.5/css/select2.min.css">
+        <link rel="stylesheet" href="{{ asset('build/app.css') }}">
+
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
@@ -14,28 +18,52 @@
         {% endblock %}
     </head>
     <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <a class="navbar-brand" href="/">Tilloy FC</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item active">
-        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+       {% if is_granted('ROLE_ADMIN') %} 
+       <a class="nav-link" href="{{path('admin.post.index')}}">Actualiter<span class="sr-only">(current)</span></a>
+       {% else %}
+       <a class="nav-link" href="/">Actualiter<span class="sr-only">(current)</span></a>
+       {% endif %}
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Features</a>
+      {% if is_granted('ROLE_JOUEUR') %}
+        <a class="nav-link" href="{{path('profil')}}">Profil</a>
+      {% endif %}
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Pricing</a>
+        {% if is_granted('ROLE_JOUEUR') %}<a class="nav-link" href="{{path('joueur_index')}} ">Equipe</a>{% endif %}
+        {% if is_granted('ROLE_ADMIN') %}<a class="nav-link" href='{{path('admin_joueur_index')}}' >Joueur</a>{% endif %}
       </li>
       <li class="nav-item">
         <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
       </li>
+
+    </ul>
+    <ul class="navbar-nav">
+          {% if is_granted('ROLE_ADMIN') or is_granted('ROLE_ENTRAINEUR') or is_granted('ROLE_JOUEUR') %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_logout') }}">Deconnexion</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+          </li>
+          {% endif %}
     </ul>
   </div>
 </nav>
         {% block body %}{% endblock %}
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="{{ asset('build/app.js') }}"></script>
+
     </body>
 </html>

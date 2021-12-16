@@ -40,7 +40,7 @@ class Picture
      * @ORM\ManyToOne(targetEntity=Post::class, inversedBy="pictures")
      */
     private $post;
-
+    
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +88,9 @@ class Picture
         $this->imageFile = $imageFile;
         return $this;
     }
+
+
+
 
 
 }

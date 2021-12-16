@@ -25,28 +25,28 @@ class EntraineurController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/new", name="entraineur_new", methods={"GET","POST"})
-     */
-    public function new(Request $request): Response
-    {
-        $entraineur = new Entraineur();
-        $form = $this->createForm(EntraineurType::class, $entraineur);
-        $form->handleRequest($request);
+    // /**
+    //  * @Route("/new", name="entraineur_new", methods={"GET","POST"})
+    //  */
+    // public function new(Request $request): Response
+    // {
+    //     $entraineur = new Entraineur();
+    //     $form = $this->createForm(EntraineurType::class, $entraineur);
+    //     $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($entraineur);
-            $entityManager->flush();
+    //     if ($form->isSubmitted() && $form->isValid()) {
+    //         $entityManager = $this->getDoctrine()->getManager();
+    //         $entityManager->persist($entraineur);
+    //         $entityManager->flush();
 
-            return $this->redirectToRoute('entraineur_index', [], Response::HTTP_SEE_OTHER);
-        }
+    //         return $this->redirectToRoute('entraineur_index', [], Response::HTTP_SEE_OTHER);
+    //     }
 
-        return $this->render('entraineur/new.html.twig', [
-            'entraineur' => $entraineur,
-            'form' => $form->createView(),
-        ]);
-    }
+    //     return $this->render('entraineur/new.html.twig', [
+    //         'entraineur' => $entraineur,
+    //         'form' => $form->createView(),
+    //     ]);
+    // }
 
     /**
      * @Route("/{id}", name="entraineur_show", methods={"GET"})
@@ -58,37 +58,7 @@ class EntraineurController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/{id}/edit", name="entraineur_edit", methods={"GET","POST"})
-     */
-    public function edit(Request $request, Entraineur $entraineur): Response
-    {
-        $form = $this->createForm(EntraineurType::class, $entraineur);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('entraineur_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('entraineur/edit.html.twig', [
-            'entraineur' => $entraineur,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="entraineur_delete", methods={"POST"})
-     */
-    public function delete(Request $request, Entraineur $entraineur): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$entraineur->getId(), $request->request->get('_token'))) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($entraineur);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('entraineur_index', [], Response::HTTP_SEE_OTHER);
-    }
 }
+
+

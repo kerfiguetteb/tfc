@@ -106,7 +106,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
         $user = $token->getUser();
 
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
-            $url = $this->urlGenerator->generate('joueur_index');
+            $url = $this->urlGenerator->generate('admin_joueur_index');
         } 
         elseif (in_array('ROLE_ENTRAINEUR', $user->getRoles())) {
             $url = $this->urlGenerator->generate('entraineur_index');
