@@ -1,4 +1,4 @@
-<div class="card mb-8">
+<div class="card">
   {% if post.picture %}
     <div id="carousel" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -27,12 +27,12 @@
             <h5 class="card-title">{{ post.titre }}</h5>
             <p class="card-text">{{ post.body }}</p>
             <p class="card-text"><small class="text-muted">{{ post.publishDate ? post.publishDate|date('Y-m-d') : '' }}</small></p>
-            <a href="{{ path('admin.post.edit', {'id': post.id}) }}" class="btn btn-primary">edit</a>
-            <form method="post" action="{{ path('admin.post.delete', {id: post.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
+            <a href="{{ path('admin_post_show', {'id': post.id}) }}" class="btn btn-primary">Voir</a>
+            {# <form method="post" action="{{ path('admin_post_delete', {id: post.id}) }}" style="display: inline-block" onsubmit="return confirm('Êtes vous vraiment sûr ?')">
                 <input type="hidden" name="_method" value="DELETE">
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ post.id) }}">
                 <button class="btn btn-danger">Supprimer</button>
-            </form>
+            </form> #}
         </div>
 </div>
 

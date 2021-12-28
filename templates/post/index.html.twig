@@ -1,27 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Post index{% endblock %}
+{% block title %}Post{% endblock %}
 
 {% block body %}
+      <h1>Actualiter</h1>
+        <div class="jumbotron">
+    <div class="container">
+        {% if postSearchForm is not defined %}
+        {% set postSearchForm = postSearchFormViewFactory.create %}
+        {% endif %}
+
+      {{ form_start(postSearchForm) }}
+      <div class="form-row align-items-end">
+        <div class="col">
+          {{ form_row(postSearchForm.section) }}
+        </div>
+        <div class="col">
+          {{ form_row(postSearchForm.categorie) }}
+        </div>
+        <div class="col">
+          {{ form_row(postSearchForm.groupe) }}
+        </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <button class="btn btn-primary">Rechercher</button>
+          </div>
+        </div>
+      </div>
+      {{ form_end(postSearchForm) }}
+    </div>
+  </div>
+
     <div class="container mt-5">
-      <h1>Post index</h1>
-    
-       <div class="col">
+        <div class="row flex justify-content-start flex-wrap">
         {% for post in posts %}
-            <div class="col-md-8">
+        
+            <div class="card-deck col-md-3">
                 
             {{ include('post/_cardPost.html.twig') }}
+
             </div>
         {% endfor %}
-       </div>
-
-    
-        {# <div class="text-center">
-        <a href="{{ path('admin.post.create') }}" class="btn btn-secondary" >Create new</a>
-        </div> #}
-        <div>
-        {{ knp_pagination_render(posts) }} 
         </div>
+        <div>
+        </div>
+        {% if postSearchForm %}
+            <a href="{{ path('post_index') }}">Revenir liste complète</a>
+
+        {% endif %}
     </div>
 {% endblock %}
 

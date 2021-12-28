@@ -52,6 +52,11 @@ class Post
     //  */
     private $pictureFiles;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="post", cascade={"persist"})
+     */
+    private $categorie;
+
 
 
     public function __construct()
@@ -168,7 +173,7 @@ class Post
 
         return $this;
     }
-        /**
+    /**
      * @return mixed
      */
     public function getPictureFiles()
@@ -188,6 +193,18 @@ class Post
             $this->addPicture($picture);
         }
         $this->pictureFiles = $pictureFiles;
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): self
+    {
+        $this->categorie = $categorie;
+
         return $this;
     }
 

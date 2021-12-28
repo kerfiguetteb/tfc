@@ -10,12 +10,11 @@ use App\Form\RegistrationFormType;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 
 
 class JoueurRegistrationType extends AbstractType
@@ -23,16 +22,22 @@ class JoueurRegistrationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('user', RegistrationFormType::class, [
-                // Masquage du label (le nom) du champ
+            ->add('nom',TextType::class,[
                 'label' => false,
+                'attr' =>[
+                    'placeholder' => 'Nom'
+                ]
             ])
-            ->add('nom')
-            ->add('prenom')
+            ->add('prenom',TextType::class,[
+                'label' => false,
+                'attr' =>[
+                    'placeholder' => 'Prenom'
+                ]
+            ])
             ->add('dateDeNaissance', DateType::class, [
                 'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd', ])
-            
+                'format' => 'yyyy-MM-dd',
+            ])            
             ->add('sexe', ChoiceType::class, [
                 'choices' => [
                     'H' => 'H',
@@ -40,6 +45,11 @@ class JoueurRegistrationType extends AbstractType
                 ],
                 'expanded' => true 
             ])
+            ->add('user', RegistrationFormType::class, [
+                // Masquage du label (le nom) du champ
+                'label' => false,
+            ])
+
             ;
         }
         

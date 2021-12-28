@@ -48,14 +48,6 @@ class JoueurController extends AbstractController
 
             $joueurActive = $joueurRepository->findOneByUser($user);
         }
-        // elseif ($this->isGranted('ROLE_ENTRAINEUR')) {
-        //     $user = $this->getUser();
-        //     //on récupere le profil joueur rattacher au compte user
-        //     $entraineur = $entraineurRepository->findOneByUser($user);
-        //     $categorie = $entraineur->getCategories();
-        //     $joueur = $categorie->getJoueurs();
-        // }
-
         return $this->render('joueur/index.html.twig', [
             'joueurs' => $joueurs,
             'categorie' => $categorie,
@@ -86,8 +78,7 @@ class JoueurController extends AbstractController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($joueur);
             $entityManager->flush();
-
-            return $this->redirectToRoute('joueur_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('joueur_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('joueur/new.html.twig', [
@@ -108,13 +99,6 @@ class JoueurController extends AbstractController
         $age = $ageDiff->format('%y');
         $user = $this->getUser();
         $userJoueur = $joueur->getUser();;
-
-        dump($user);
-        dump($userJoueur);
-
-
-        // return $this->redirectToRoute('joueur_show', ['id'=>$userJoueur ->getId()], Response::HTTP_SEE_OTHER);
-
 
         return $this->render('joueur/show.html.twig', [
             'joueur' => $joueur,
@@ -211,7 +195,6 @@ class JoueurController extends AbstractController
         // Si aucune redirection n'est nécessaire, on renvoit une valeur nulle
         return null;
     }
-
 
 
 }

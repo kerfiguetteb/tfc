@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Knp\Component\Pager\PaginatorInterface;
+
 
 
 class ProfilController extends AbstractController
@@ -21,7 +23,7 @@ class ProfilController extends AbstractController
     /**
      * @Route("/profil", name="profil")
      */
-    public function index(JoueurRepository $joueurRepository): Response
+    public function index(PaginatorInterface $paginator,JoueurRepository $joueurRepository, EntraineurRepository $entraineurRepository, Request $request): Response
     {
         $joueurs = $joueurRepository->findAll();
         $user = $this->getUser();
@@ -30,15 +32,27 @@ class ProfilController extends AbstractController
         $today = new \DateTime(date('Y-m-d H:i:s'));
         $ageDiff = $birthday->diff($today);
         $age = $ageDiff->format('%y');
+        $categorieId = $joueur->getCategorie()->getId();
+        $categorie = $joueur->getCategorie();
+        $joueurs = $categorie->getJoueurs();
+        $joueurActive = $joueurRepository->findOneByUser($user);
+        $joueurCount = count($joueurs)-1;
+        $entraineur = $entraineurRepository->findByCategorie($categorieId);
 
 
-
-        // return $this->redirectToRoute('joueur_show', ['id'=>$joueur->getId()], Response::HTTP_SEE_OTHER);
-
+        // $pagination = $paginator->paginate(
+        //     $joueurs, /* query builder NOT result */
+        //     $request->query->getInt('page', 1), /*page number*/
+        //     6/*limit per page*/
+        // );
 
         return $this->render('profil/index.html.twig', [
             'joueur' => $joueur,
+            'joueurs' => $joueurs,
             'age' => $age,
+            'joueurActive'=>$joueurActive,
+            'joueurCount' => $joueurCount,
+            'entraineur' => $entraineur
         ]);
     }
 }

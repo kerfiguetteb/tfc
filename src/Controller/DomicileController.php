@@ -69,8 +69,7 @@ class DomicileController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('domicile_index', [], Response::HTTP_SEE_OTHER);
-        }
+       }
 
         return $this->render('domicile/edit.html.twig', [
             'domicile' => $domicile,

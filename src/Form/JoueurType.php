@@ -38,7 +38,9 @@ class JoueurType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd', ])
 
-            
+            // ->add('position',EntityType::class,[
+            //     'required'=>false
+            // ])
         ;
     }
 

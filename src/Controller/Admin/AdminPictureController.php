@@ -10,14 +10,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 
-// /**
-//  * @Route("/admin/post")
-//  */
+/**
+ * @Route("/admin/picture")
+ */
 
 class AdminPictureController extends AbstractController{
 
     /**
-     * @Route("admin/post/edit/{id}", name="admin.picture.delete", methods="DELETE" )
+     * @Route("/{id}", name="admin_picture_delete", methods="DELETE" )
      */
     public function delete(Request $request, Picture $picture): Response
     {
@@ -28,6 +28,6 @@ class AdminPictureController extends AbstractController{
             $entityManager->flush();
         }
 
-        return $this->redirectToRoute('admin.post.edit', ['id'=>$postId], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('admin_post_edit', ['id'=>$postId], Response::HTTP_SEE_OTHER);
     }
 }

@@ -38,7 +38,7 @@ class Entraineur
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="entraineurs")
+     * @ORM\ManyToOne(targetEntity=Categorie::class, inversedBy="entraineurs", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $categories;

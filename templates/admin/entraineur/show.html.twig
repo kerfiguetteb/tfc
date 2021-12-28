@@ -22,9 +22,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('admin_entraineur_index') }}">back to list</a>
+    <a href="{{ path('admin_entraineur_index') }}">revenir liste</a>
 
-    <a href="{{ path('admin_entraineur_edit', {'id': entraineur.id}) }}">edit</a>
+    <a href="{{ path('admin_entraineur_edit', {'id': entraineur.id}) }}">modifer</a>
 
     {{ include('admin/entraineur/_delete_form.html.twig') }}
 {% endblock %}

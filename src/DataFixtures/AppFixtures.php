@@ -54,13 +54,12 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
 
         $this->loadAdmins($manager);
         // $journers = $this->loadJourners($manager);
-        $postAndTag = $this->loadPostsAndTags($manager);
-
-        // $equipes = $this->loadEquipes($manager, $equipeCount);
-        $positions = $this->loadPositions($manager);
+        
+        $equipes = $this->loadEquipes($manager);
         $categories = $this->loadCategories($manager,$sectionCount,$groupeCount);
-        $joueurs = $this->loadJoueurs($manager, $categories, $joueurParGroupe, $positions);
-        $entraineurs = $this->loadEntraineurs($manager, $categories, $categories );
+        $postAndTag = $this->loadPostsAndTags($manager,$categories);
+        $joueurs = $this->loadJoueurs($manager, $categories, $joueurParGroupe);
+        $entraineurs = $this->loadEntraineurs($manager, $categories );
         // $visiteurs = $this->loadVisiteurs($manager, $equipes);
         // $domiciles = $this->loadDomiciles($manager, $equipes, $visiteurs);
         $manager->flush();
@@ -79,22 +78,6 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $manager->persist($user);
     }
 
-
-    public function loadPositions($manager)
-    {
-        $positions = [];
-        $arrayPosition = [['name' => 'AT' ],['name' => 'AG' ],['name' => 'AD' ],['name' => 'MO' ],
-        ['name' => 'MG' ],['name' => 'MD' ],['name' => 'MC' ],['name' => 'MDC' ],['name' => 'DD' ],
-        ['name' => 'DC' ],['name' => 'DG' ],['name' => 'GB' ],];
-
-        foreach ($arrayPosition as $row) {
-            $position = new Position;
-            $position->setName($row['name']);
-            $manager->persist($position);
-            $positions[] = $position;
-        }
-        return $positions;
-    }
 
     public function loadCategories(ObjectManager $manager, int $sectionCount, int $groupeCount)
     {
@@ -132,7 +115,32 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             return $categories;
     }
 
-    public function loadJoueurs(ObjectManager $manager, array $categories, int $joueurParGroupe, array $positions )
+    public function loadPostsAndTags(ObjectManager $manager, $categories)
+    {        
+        for ($i = 1; $i <= 20; $i++) {
+            $tag = new Tag();
+            $tag->setName($this->faker->words($nb = 3, $asText = true));
+            $manager->persist($tag);
+        }
+
+        $manager->flush();
+
+
+        for ($i = 1; $i <= 20; $i++) {
+            $post = new Post();
+            $post->setTitre($this->faker->sentence($nbWords = 6, $variableNbWords = true));
+            $post->setBody($this->faker->text($maxNbChars = 1000));
+            $post->setPublishDate($this->faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = null));
+            $post->setCategorie($categories[rand(0,count($categories)-1)]);
+            $post->addTag($tag);
+            $manager->persist($post);
+        }
+
+        $manager->flush();
+    }
+
+
+    public function loadJoueurs(ObjectManager $manager, array $categories, int $joueurParGroupe)
     {
         $equipes = [];
         $equipe = new Equipe();
@@ -149,19 +157,38 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
         $user->setRoles(['ROLE_JOUEUR']);
         $manager->persist($user);
 
+        $position = ["gardien","defenseur","milieu","attaquant"];
+        $milieu = [6,7,8,10];
+        $attaquant = [9,11];
         $joueur = new Joueur;
         $joueur -> setSexe('M');
         $joueur -> setNom('joueur');
         $joueur -> setPrenom('joueur');
         $joueur->setUser($user);
         $joueur->setEquipe($tilloy);
-        $joueur->setPosition($positions[0]);
+        $joueur->setPosition($position[array_rand($position,1)]);
+        if ($joueur->getPosition() == 'gardien') {
+            $joueur->setNumero(1);
+        }
+        elseif ($joueur->getPosition() == 'defenseur') {
+            $joueur->setNumero(rand(2,5));
+        }elseif($joueur->getPosition()=='milieu'){
+            $joueur->setNumero($milieu[array_rand($milieu,1)]);
+
+        }else {
+            $joueur->setNumero($attaquant[array_rand($attaquant,1)]);
+        }
         $joueur->setCategorie($categories[25]);
         $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-50 years', $endDate = 'now'));
         $manager->persist($joueur);
 
         foreach ($categories as $categorie) {
             for ($i=1; $i<= $joueurParGroupe ; $i++) { 
+
+                $position = ["gardien","defenseur","milieu","attaquant"];
+                $milieu = [6,7,8,10];
+                $attaquant = [9,11];
+        
                 $user = new User();
                 $user->setEmail($this->faker->email());
                 // Hachage du mot de passe.
@@ -177,8 +204,20 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
                 $joueur -> setPrenom($this->faker->lastName());
                 $joueur->setUser($user);
                 $joueur->setEquipe($tilloy);
-                $joueur->setPosition($positions[0]);
                 $joueur->setCategorie($categorie);
+                $joueur->setPosition($position[array_rand($position,1)]);
+                if ($joueur->getPosition() == 'gardien') {
+                    $joueur->setNumero(1);
+                }
+                elseif ($joueur->getPosition() == 'defenseur') {
+                    $joueur->setNumero(rand(2,5));
+                }elseif($joueur->getPosition()=='milieu'){
+                    $joueur->setNumero($milieu[array_rand($milieu,1)]);
+        
+                }else {
+                    $joueur->setNumero($attaquant[array_rand($attaquant,1)]);
+                }
+                        
                 if ($categorie->getNom()== 'U8-U9') {
                     # code...
                     $joueur -> setDateDeNaissance($this->faker->dateTimeBetween($startDate = '-9 years', $endDate = 'now -8years'));
@@ -302,23 +341,18 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     // }
 
 
-    // public function loadEquipes(ObjectManager $manager)
-    // {
-    //     $equipes = [];
-    //         $equipe = new Equipe();
-    //         $equipe->setName("tilloy"); 
-    //         for ($i=1; $i <=12 ; $i++) { 
-    //             $equipe = new Equipe();
-    //             $equipe->setName($this->faker->name()); 
-
-    //         }
-    //         $manager->persist($equipe);
-    //         $equipes[] = $equipe;
+    public function loadEquipes(ObjectManager $manager)
+    {
+            $equipes = [];
+            $equipe = new Equipe();
+            $equipe->setName("tilloy"); 
+            $manager->persist($equipe);
+            $equipes[] = $equipe;
 
 
         
-    //     return $equipes;
-    // }
+        return $equipes;
+    }
    
     // public function loadVisiteurs(ObjectManager $manager, array $equipes)
     // {
@@ -407,30 +441,5 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
     //     return $domiciles;
 
     // }
-    public function loadPostsAndTags(ObjectManager $manager)
-    {        
-        
-
-
-        for ($i = 1; $i <= 20; $i++) {
-            $tag = new Tag();
-            $tag->setName($this->faker->words($nb = 3, $asText = true));
-            $manager->persist($tag);
-        }
-
-        $manager->flush();
-
-
-        for ($i = 1; $i <= 20; $i++) {
-            $post = new Post();
-            $post->setTitre($this->faker->sentence($nbWords = 6, $variableNbWords = true));
-            $post->setBody($this->faker->text($maxNbChars = 1000));
-            $post->setPublishDate($this->faker->dateTimeBetween($startDate = '-1 year', $endDate = 'now', $timezone = null));
-            $post->addTag($tag);
-            $manager->persist($post);
-        }
-
-        $manager->flush();
-    }
 
 }

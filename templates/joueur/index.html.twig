@@ -9,30 +9,26 @@
 
 
     <div class="row flex justify-content-center flex-wrap">
-    {% for joueur in joueurs|filter(joueur => joueur != joueurActive) %}
+            {% for joueur in joueurs|filter(joueur => joueur != joueurActive) %}
         <div class="card-deck col-md-3">
-        <div class="card mb-4">
-            {# {% if joueur.picture %} #}
-            {# {% for picture in joueur.pictures %} #}
-                
-                {# <img src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('thumb') }}" alt="card-img-top" style="width: 100%; height:auto;"> #}
-                {# {% else %} #}
-                <img src="{{ '/images/homme.jpg' | imagine_filter('thumb') }}" alt="card-img-top" style= "height:auto; margin:15px">
-            {# {% endfor %} #}
-            {# {% endif %} #}
-            <div class="card-body" style="text-align:center">
-            <h5 class="card-title"> {{ joueur.nom }} {{ joueur.prenom }}</h5>
-            {# <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p> #}
-            <p class="card-text"><small class="text-muted">{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</small></p>
-             <a href="{{ path('joueur_show', {'id': joueur.id}) }}" class="btn btn-primary">Voir Profil</a>
+            <div class="card mb-4">
+                {% if joueur.filename %}
+                    <img src="{{ vich_uploader_asset(joueur, 'imageFile') | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% else %}
+                    <img src="{{ '/images/iconUser.jpg' | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% endif %}
+                <div class="card-body" style="text-align:center">
+                <h5 class="card-title"> {{ joueur.nom }} {{ joueur.prenom }}</h5>
+                <p class="card-text"><small class="text-muted">{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</small></p>
+                <a href="{{ path('joueur_show', {'id': joueur.id}) }}" class="btn btn-primary">Voir Profil</a>
+                </div>
             </div>
         </div>
-        </div>
-        {% else %}
-            <tr>
-                <td colspan="11">no records found</td>
-            </tr>
-    {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="11">no records found</td>
+                </tr>
+        {% endfor %}
     </div>
         {% if is_granted('ROLE_ADMIN') %}
     <a href="{{ path('joueur_new') }}">Create new</a>

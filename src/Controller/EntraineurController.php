@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Entraineur;
 use App\Form\EntraineurType;
 use App\Repository\EntraineurRepository;
+use App\Repository\JoueurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,35 +19,27 @@ class EntraineurController extends AbstractController
     /**
      * @Route("/", name="entraineur_index", methods={"GET"})
      */
-    public function index(EntraineurRepository $entraineurRepository): Response
+    public function index(EntraineurRepository $entraineurRepository, JoueurRepository $joueurRepository): Response
     {
-        return $this->render('entraineur/index.html.twig', [
-            'entraineurs' => $entraineurRepository->findAll(),
+        
+        
+        if ($this->isGranted('ROLE_ENTRAINEUR')) {
+            $user = $this->getUser();
+            //on récupere le profil joueur rattacher au compte user
+            $entraineur = $entraineurRepository->findOneByUser($user);
+            $categorie = $entraineur->getCategories();
+            $section = $categorie->getSection();
+            $categorieName = $categorie->getNom();
+            $groupe = $categorie->getGroupe();
+
+            $joueurs = $joueurRepository->findBySectionGroupeName($section,$groupe,$categorieName);
+            dump($joueurs);
+        }
+
+        return $this->render('entraineur/joueur/index.html.twig', [
+            'joueurs'=> $joueurs,
         ]);
     }
-
-    // /**
-    //  * @Route("/new", name="entraineur_new", methods={"GET","POST"})
-    //  */
-    // public function new(Request $request): Response
-    // {
-    //     $entraineur = new Entraineur();
-    //     $form = $this->createForm(EntraineurType::class, $entraineur);
-    //     $form->handleRequest($request);
-
-    //     if ($form->isSubmitted() && $form->isValid()) {
-    //         $entityManager = $this->getDoctrine()->getManager();
-    //         $entityManager->persist($entraineur);
-    //         $entityManager->flush();
-
-    //         return $this->redirectToRoute('entraineur_index', [], Response::HTTP_SEE_OTHER);
-    //     }
-
-    //     return $this->render('entraineur/new.html.twig', [
-    //         'entraineur' => $entraineur,
-    //         'form' => $form->createView(),
-    //     ]);
-    // }
 
     /**
      * @Route("/{id}", name="entraineur_show", methods={"GET"})

@@ -5,21 +5,29 @@
 {% block body %}
 
     <div class="container mt-4" style="text-align:center">
-            <div class=" position-relative"style="top:30px;">
+        <div class=" position-relative"style="top:30px;">
             <img src="{{ '/images/tfc.png' | imagine_filter('large')}}" class="img-fluid" style= "Responsive image;">
-            </div>
+        </div>
             <div class="position-relative" style="top:-30px;">
-            {% if joueur.filename %}
-                <img src="{{ vich_uploader_asset(joueur, 'imageFile') | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
-            {% else %}
-                <img src="{{ '/images/iconUser.jpg' | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
-            {% endif %}
+                {% if joueur.filename %}
+                    <img src="{{ vich_uploader_asset(joueur, 'imageFile') | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% else %}
+                    <img src="{{ '/images/iconUser.jpg' | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% endif %}
                 <h1 style="">{{joueur.nom}} {{joueur.prenom}}</h1>
+                {% if joueur.position.name is not defined  %}
+                <h2></h2>
+                {% else %}
                 <h2>{{ joueur.position.name }}</h2>
+                {% endif %}
            
-                <div class="col mt-3">
+                <div class="col mb-5">
                     <table class="table">
                         <tbody>
+                            <tr>
+                                <th>Entraineur</th>
+                                {# <td> <a href="{{ path('entraineur_show', {'id': entraineur.id}) }}">{{entraineur.nom}} {{entraineur.prenom}}</a></td> #}
+                            </tr>
                             <tr>
                                 <th>Categorie</th>
                                 <td>{{ joueur.categorie.nom }} {{ joueur.categorie.groupe }}</td>
@@ -37,64 +45,35 @@
                     <a href="{{ path('joueur_edit', {'id': joueur.id}) }}" class="btn btn-primary">Modifier mes informations</a>
 
                 </div>
-            
+            <div class="col mt-4 " style='text-align:left; '>
+                <h4 class="p-3 mb-2 bg-dark text-white rounded">Equipe</h4><p class="m-4 text-muted">{{joueurCount}} Joueurs</p>
+            </div>
+           <div class="row flex justify-content-center">
+                {% for joueur in joueurs|filter(joueur => joueur != joueurActive) %}
+                <div class="card-deck col-md-3">
+                <div class="card mb-4">
+                    {% if joueur.filename %}
+                        <img src="{{ vich_uploader_asset(joueur, 'imageFile') | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                    {% else %}
+                        <img src="{{ '/images/iconUser.jpg' | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                    {% endif %}
+                    <div class="card-body" style="text-align:center">
+                    <h4 class="card-title"> {{ joueur.prenom }}</h5>
+                    <h5 class="card-title"> {{ joueur.nom }}</h5>
+                    {# <p class="card-text"><small class="text-muted">{{joueur.position.name}}</small></p> #}
+                    <a href="{{ path('joueur_show', {'id': joueur.id}) }}" class="btn btn-primary">Voir statistique</a>
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+        {# <div>
+        {{ knp_pagination_render(joueurs) }} 
+        </div> #}
+
+    </div>
+                </div>
             </div>
 
     </div>
-   
-   
-   
-   
-
-
-   
-        {# <div class="col mt-3">
-            <table class="table">
-                <tbody>
-                    <tr>
-                    <tr>
-                        <th>Position</th>
-                        <td>{{ joueur.position.name }}</td>
-                    </tr>
-                        <th>Categorie</th>
-                        <td>{{ joueur.categorie.nom }} {{ joueur.categorie.groupe }}</td>
-                    </tr>
-                    <tr>
-                        <th>Date de naissance</th>
-                        <td>{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('d/m/Y') : '' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Age</th>
-                        <td>{{ age }} ans</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> #}
-    {# <table class="table">
-    <thead class="thead-dark">
-        <tr>
-        <th scope="col">Equipe</th>
-        <th scope="col">But</th>
-        <th scope="col">Match</th>
-        <th scope="col">Carton Jaune</th>
-        <th scope="col">Carton Rouge</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="table-info">
-        <th scope="row">{{ joueur.equipe.name }}</th>
-        <td>{{ joueur.but }}</td>
-        <td>{{ joueur.matchJouer }}</td>
-        <td>{{ joueur.cartonJaune }}</td>
-        <td>{{ joueur.cartonRouge }}</td>
-        </tr>
-    </tbody>
-    </table>
-    <a href="{{ path('joueur_index') }}">back to list</a>
-    {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('joueur_edit', {'id': joueur.id}) }}">edit</a>
-    {{ include('joueur/_delete_form.html.twig') }}
-    {% endif %} #}
-
 
 {% endblock %}

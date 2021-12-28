@@ -1,5 +1,8 @@
 // customize some Bootstrap variables
-$primary: darken(#e44848, 20%);
+$primary: darken(#ED1E24, 20%);
+$font-family_h1: lato;
+$font-family_h2: arsenal;
+$font-family_p: martel;
 
 // the ~ allows you to reference things in node_modules
 @import "~bootstrap/scss/bootstrap";
@@ -7,14 +10,24 @@ $primary: darken(#e44848, 20%);
 // body {
 // }
 a {
-    color:  #e93b44 ;
+    color:  #a7a6a6 ;
     text-decoration: none;
 }
 
 h1{
     text-align: center;
-    margin: 20px;
+    margin-top: 100px;
+    font-family: $font-family_h1;
 }
+
+h2,h3,h4,h5{
+    font-family: $font-family_h2;
+}
+
+p{
+    font-family: $font-family_p;
+}
+
 .available{
     color: rgb(62, 182, 62);
 }
@@ -24,3 +37,23 @@ h1{
 .img-fluid{
   border: 6px solid rgb(255, 255, 255) ;  
 } 
+.navbar{
+    justify-content: center;
+    padding:15px;
+    border-radius: 6px;
+}
+
+.container{
+    margin-top: 40px;
+}
+
+.text-post{
+    color: blue;
+}
+
+.acceuil{
+
+    background-color: rgb(50,48,48);
+    color: white;
+    border-radius: 6px;
+}

@@ -69,7 +69,7 @@ class CategorieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+            // return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('categorie/edit.html.twig', [

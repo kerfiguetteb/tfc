@@ -3,37 +3,37 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Post;
+use App\Entity\Picture;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Service\PostSearchFormViewFactory;
+use App\Service\ChoicesFormViewFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+
+    /**
+     * @Route("/admin/post")
+     */
 
 class AdminPostController extends AbstractController
 {
+
     /**
-     * @Route("/admin", name="admin.post.index")
+     * @Route("/", name="admin_post_index", methods={"GET","POST"})
      */
-    public function index(PaginatorInterface $paginator, PostRepository $postRepository, Request $request): Response
+    public function index(PostRepository $postRepository,PostSearchFormViewFactory $postSearchFormViewFactory, Request $request): Response
     {       
-        $qb = $postRepository->findBy([],['id' => 'DESC']);;
-
-        $pagination = $paginator->paginate(
-            $qb, /* query builder NOT result */
-            $request->query->getInt('page', 1), /*page number*/
-            5 /*limit per page*/
-        );
-
         return $this->render('admin/post/index.html.twig', [
-            'posts' => $pagination,
+            'posts' => $postRepository->findBy([],['id' => 'DESC']),
         ]);
     }
 
     /**
-     * @Route("admin/post/create", name="admin.post.create", methods={"GET","POST"})
+     * @Route("/new", name="admin_post_create", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -46,7 +46,7 @@ class AdminPostController extends AbstractController
             $entityManager->persist($post);
             $entityManager->flush();
 
-            return $this->redirectToRoute('admin.post.index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/post/new.html.twig', [
@@ -54,11 +54,22 @@ class AdminPostController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    
+    /**
+     * @Route("/{id}", name="admin_post_show", methods={"GET"})
+     */
+    public function show(Post $post): Response
+    {
+        return $this->render('admin/post/show.html.twig', [
+            'post' => $post,
+        ]);
+    }
+
 
     /**
-     * @Route("admin/post/{id}/edit", name="admin.post.edit", methods={"GET","POST"})
+     * @Route("{id}/edit", name="admin_post_edit", methods={"GET","POST"})
      */
-    public function edit(Request $request, Post $post): Response
+    public function edit(Request $request, Post $post, ChoicesFormViewFactory $choicesFormViewFactory): Response
     {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
@@ -66,7 +77,7 @@ class AdminPostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('admin.post.index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('admin/post/edit.html.twig', [
@@ -75,20 +86,19 @@ class AdminPostController extends AbstractController
         ]);
     }
 
+
     /**
-     * @Route("admin/post/{id}", name="admin.post.delete", methods={"DELETE"})
-     * @param Post $post
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @Route("/{id}", name="admin_post_delete", methods={"DELETE"})
      */
-    public function delete(Post $post,Request $request)
+    public function delete(Post $post, Request $request): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $post->getId(), $request->get('_token'))){
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($post);
             $entityManager->flush();
             $this->addFlash('success', 'Bien supprimé avec succès');
         }
-        return $this->redirectToRoute('admin.post.index');
-    }
+        return $this->redirectToRoute('admin_post_index', [], Response::HTTP_SEE_OTHER);
+}
    
 }

@@ -84,8 +84,9 @@ security:
         - { path: ^/equipe, roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }
 
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/entraineur, roles: ROLE_ENTRAINEUR }
 
 
         # Tous les chemins commençant par "/search" ne sont accessibles qu'aux roles admin ou JOUEUR.
         # Cette route correspond à la recherche de JOUEURs
-        - { path: ^/search, roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }
+        # - { path: ^/search, roles: [ROLE_ADMIN, ROLE_JOUEUR, ROLE_ENTRAINEUR] }

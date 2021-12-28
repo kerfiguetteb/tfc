@@ -3,7 +3,6 @@
 namespace App\Listener;
 
 use App\Entity\Picture;
-use App\Entity\Joueur;
 use App\Entity\Post;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;

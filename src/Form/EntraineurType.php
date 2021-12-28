@@ -15,7 +15,13 @@ class EntraineurType extends AbstractType
             ->add('nom')
             ->add('prenom')
             ->add('user')
-            ->add('categories')
+            ->add('categories', CategorieType::class)
+
+            ->add('user', UserType::class, [
+                // Masquage du label (le nom) du champ
+                'label' => false,
+            ])
+
         ;
     }
 

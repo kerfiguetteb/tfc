@@ -7,5 +7,7 @@ twig:
 
     globals:
         joueurSearchFormViewFactory: '@App\Service\JoueurSearchFormViewFactory'
+        postSearchFormViewFactory: '@App\Service\PostSearchFormViewFactory'
+        choicesFormViewFactory: '@App\Service\ChoicesFormViewFactory'
 
 

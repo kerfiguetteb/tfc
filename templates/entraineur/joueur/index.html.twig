@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entraineur index{% endblock %}
+
+{% block body %}
+    <div = "container mt-4">
+    <h1>Entraineur index</h1>
+    <div class="row flex justify-content-center flex-wrap">
+
+            {% for joueur in joueurs %}
+        <div class="card-deck col-md-3">
+            <div class="card mb-4">
+                {% if joueur.filename %}
+                    <img src="{{ vich_uploader_asset(joueur, 'imageFile') | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% else %}
+                    <img src="{{ '/images/iconUser.jpg' | imagine_filter('medium')}}"  style= "Responsive image;" class="img-fluid rounded-circle ">
+                {% endif %}
+                <div class="card-body" style="text-align:center">
+                <h5 class="card-title"> {{ joueur.nom }} {{ joueur.prenom }}</h5>
+                <p class="card-text"><small class="text-muted">{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</small></p>
+                <a href="{{ path('entraineur_joueur_show', {'id': joueur.id}) }}" class="btn btn-primary">Voir Profil</a>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+    </div>
+
+    <a href="{{ path('entraineur_joueur_new') }}">Create new</a>
+    </div>
+{% endblock %}

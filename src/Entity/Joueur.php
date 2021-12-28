@@ -26,7 +26,7 @@ class Joueur
     
     /**
      * @var string|null
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $filename;
 
@@ -102,14 +102,19 @@ class Joueur
     private $dateDeNaissance;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Position::class, inversedBy="joueurs")
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updated_at;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $position;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="integer", nullable=true)
      */
-    private $updated_at;
+    private $numero;
 
 
     public function getId(): ?int
@@ -249,17 +254,6 @@ class Joueur
         return $this;
     }
 
-    public function getPosition(): ?Position
-    {
-        return $this->position;
-    }
-
-    public function setPosition(?Position $position): self
-    {
-        $this->position = $position;
-
-        return $this;
-    }
     /**
      * @return null|string
      */
@@ -308,6 +302,30 @@ class Joueur
     public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->position;
+    }
+
+    public function setPosition(?string $position): self
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
+    public function getNumero(): ?int
+    {
+        return $this->numero;
+    }
+
+    public function setNumero(?int $numero): self
+    {
+        $this->numero = $numero;
 
         return $this;
     }

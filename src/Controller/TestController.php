@@ -12,6 +12,7 @@ use App\Entity\Categorie;
 use App\Repository\CategorieRepository;
 use App\Entity\Entraineur;
 use App\Repository\EntraineurRepository;
+use App\Repository\PostRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +27,8 @@ class TestController extends AbstractController
         EntraineurRepository $entraineurRepository, 
         DomicileRepository $domicileRepository, 
         JoueurRepository $joueurRepository,
-        CategorieRepository $categorieRepository
+        CategorieRepository $categorieRepository,
+        PostRepository $postRepository
         ): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
@@ -37,17 +39,18 @@ class TestController extends AbstractController
 
         $equipe = $equipeRepository->find(1);
         $equipe->getDomicile();
-        // dump($equipe);
+        dump($equipe);
         
         $categories = $categorieRepository->findAll();
-        dump($categories);
+        // dump($categories);
 
 
         // $categorie = $categorieRepository->findByGroupeAndsection('A','Masculine');
         // dump($categorie);
     
         $joueurs = $joueurRepository->findBySectionGroupeName('Masculine','A','U8-U9');
-        dump($joueurs);
+        $posts = $postRepository->findBySectionGroupeName('Feminine','C','Veteran');
+        dump($posts);
 
         $categorieId = 26;
         $entraineur = $entraineurRepository->findByCategorie($categorieId);

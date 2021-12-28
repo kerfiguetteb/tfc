@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Joueur</h1>
   <div class="jumbotron">
-    <div class="container">
+    <div class="container mt-4">
         {% if joueurSearchForm is not defined %}
         {% set joueurSearchForm = joueurSearchFormViewFactory.create %}
         {% endif %}
@@ -33,14 +33,13 @@
   </div>
     
     <div>
-    <a href="{{ path('admin_joueur_new') }}" class="btn btn-secondary"style="margin:15px">Creer un nouveau joueur</a>
+    <a href="{{ path('admin_joueur_new') }}" class="btn btn-secondary"style="margin:15px"> + Ajouter un joueur</a>
     </div>
 
    
-    <table class="table">
+    <table class="table m-4">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Nom</th>
                 <th>Prenom</th>
                 <th>Section</th>
@@ -58,7 +57,6 @@
         <tbody>
         {% for joueur in joueurs %}
             <tr>
-                <td>{{ joueur.id }}</td>
                 <td>{{ joueur.nom }}</td>
                 <td>{{ joueur.prenom }}</td>
             {# {% for categorie in joueur.categories %} #}
@@ -74,12 +72,13 @@
                 <td>{{ joueur.matchJouer }}</td>
                 <td>{{ joueur.dateDeNaissance ? joueur.dateDeNaissance|date('Y-m-d') : '' }}</td>
                 <td>
-                    <a href="{{ path('admin_joueur_show', {'id': joueur.id}) }}">show</a>
+                    <a href="{{ path('joueur_show', {'id': joueur.id}) }}">show</a>
                     {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('admin_joueur_edit', {'id': joueur.id}) }}">edit</a>
                     {% endif %}
                 </td>
             </tr>
+
         {% else %}
             <tr>
                 <td colspan="11">no records found</td>

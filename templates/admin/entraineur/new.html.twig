@@ -3,9 +3,13 @@
 {% block title %}New Entraineur{% endblock %}
 
 {% block body %}
-    <h1>Create new Entraineur</h1>
+    <h1>Nouveau Entraineur</h1>
 
-    {{ include('entraineur/_form.html.twig') }}
+    <div class="container mt-4">
+    <div class="mb-2">
+    {{ include('admin/entraineur/_form.html.twig') }}
+    </div>
 
-    <a href="{{ path('entraineur_index') }}">back to list</a>
+    <a href="{{ path('admin_entraineur_index') }}">&#60&#60 revenir liste</a>
+    </div>
 {% endblock %}

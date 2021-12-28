@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Entraineur index{% endblock %}
+
+{% block body %}
+    <div class = "container mt-4">
+    {{ include('entraineur/joueur/_form.html.twig', {'button_label': 'Sauvegarder'}) }}
+
+    <a href="{{ path('entraineur_joueur_index') }}">Voir mes joueurs</a>
+
+    {# {{ include('entraineur/joueur/_delete_form.html.twig') }} #}
+
+
+    </div>
+{% endblock %}

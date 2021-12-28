@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4">
+    <div class="mb-4">
+            <h1 style='text-align:start'><img src="images/logo.jpg" style='width:80px'> Tilloy Football Club</h1>
+    </div>
+
+    <section class="post">
+        <div class= "acceuil mt-4">
+        <h2 class="p-2">Actu</h2>
+        </div>
+            
+        <div class="row flex justify-content-center flex-wrap">
+            {% for post in posts %}
+                <div class="card-deck col-md-3 ">
+                    <div class="card mt-4">
+                    {% if post.picture %}
+                        <img class="card-img-top" src="{{ vich_uploader_asset(post.picture, 'imageFile') }}" alt="Card image cap"/>
+                    {% else %}
+                            <img src="{{ '/images/logo.jpg'}}"  style= "Responsive image;" class="card-img-top " alt="Card image cap">
+                    {% endif %}
+                    <div class="card-body" style="text-align:center">
+                        <h5 class="card-title"> {{ post.titre }}</h5>
+                        <p class="card-text text-truncate "><small class="text-muted">{{ post.body }}</small></p>
+                        <a href="{{ path('post_show', {'id': post.id}) }}" class="btn btn-primary">Voir</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+                <tr>
+                    <td colspan="11">no records found</td>
+                </tr>
+            {% endfor %}
+            <div class="mt-4" style="text-align:end;">
+            <a href="{{ path('post_index') }}">Voir toutes les actus &gt&gt&gt</a>
+            </div>
+        </div>
+    </section>
+        <div class= "acceuil mt-5">
+        <h2 class="p-2">Images</h2>
+        </div>
+
+
+    <section >
+     <div class="row flex justify-content-center flex-wrap">
+        <div class='col-md-6 mt-4'>
+        <div id="carousel" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+            
+            {% for picture in pictures %}
+                <li data-target="#carousel" data-slide-to="{{ loop.index0 }}" {% if loop.index0 == 0 %} class="active" {% endif %}></li>
+                {% endfor %}
+        </ol>
+        <div class="carousel-inner">
+            {% for picture in pictures  %}
+                <div {% if loop.index0 == 0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif %}> 
+                    <img class="img-responsive center-block"  src="{{ vich_uploader_asset(picture, 'imageFile') }}"  style="width: 100%; height:auto%;"/>
+                </div>
+            {% endfor %}
+        </div>
+        <a class="left carousel-control" href="#carousel" role="button" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#carousel" role="button" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+        </div>
+
+        </div>
+     </div>
+            <div class="mt-4" style="text-align:end;">
+            <a href="">Voir toutes les photos &gt&gt&gt</a>
+            </div>
+
+    </section>
+</div>
+
+{% endblock %}
