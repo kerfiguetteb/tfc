@@ -21,8 +21,8 @@ class ContactController extends AbstractController
     public function notify(Contact $contact)
     {
         $message = (new \Swift_Message('tfc : ' . $contact->getNom().$contact->getPrenom()))
-        ->setFrom(['kerfiguetteboutman@gmail.com' => 'Kerfi Outman'])
-        ->setTo('kerfiguetteboutman@gmail.com')
+        ->setFrom(['tfc@example.com' => 'PresidentClub'])
+        ->setTo('contact@example.com')
         ->setReplyTo($contact->getEmail())
         ->setBody($this->render('email/contact.html.twig', [
             'contact' => $contact
